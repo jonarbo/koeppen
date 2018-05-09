@@ -25,8 +25,8 @@
 				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		}
 
-		function handleFileSelect(evt) {
-			var file = '../Data/Ready-JS/guatemala-cleaned-compact.js'
+		function handleFile(datafile) {
+			var file = datafile
 			
 			Papa.parse(file, {
 				header: true,
@@ -65,12 +65,14 @@
 		function initialize() {
 		  var mapOptions = {
 			zoom: 6,
-			center: new google.maps.LatLng(15.7,-90),
-			mapTypeId: google.maps.MapTypeId.SATELLITE
+			center: new google.maps.LatLng(15.7,-90)
 		  };
 
 		  map = new google.maps.Map(document.getElementById('map-canvas'),
 			  mapOptions);
+
+		  var file = '../Data/Ready-JS/guatemala-cleaned-compact.js'
+		  //handeFile(file)	
 		}
 		
 		$(document).ready(function(){
