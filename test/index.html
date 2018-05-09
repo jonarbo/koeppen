@@ -175,14 +175,19 @@
 	</script>
 </head>
 <body>
-  <!-- there goes the map -->
+	<div id="header"> 
+		<img src="../img/CCBLogo.jpg" alt="Consortium for Capacity Building" >
+	</div>
+	<h1>Modified KOEPPEN for ENOS</h1>
+	
+	<!-- there goes the map -->
 	<div id="map-canvas"> </div>
 
   <!-- the draggable input and display controls -->
 	<div id="draggable">
 		<div id="project"><a href="https://github.com/joyofdata/csv-heatmap" target="X">github.com/joyofdata/csv-heatmap</a></div>
-		<input type="file" id="csv-file" name="files"/>
-
+		<select id="selection" style="width:100px;height:25px;margin:5px 0 5px 0;">&#xD;      <option value="" selected>Guatemala</option>&#xD;</select>
+    
 		<div id="radius-label">radius: 20</div>
 		<div id="radius-slider"></div>
 
