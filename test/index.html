@@ -54,7 +54,7 @@
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
 						var dcolor = getColor(row["RR"]) 
-						new google.maps.Circle({
+						var koepenCircle = new google.maps.Circle({
 																	strokeColor: dcolor,
 																	strokeWeight: 1,
 																	fillColor:   dcolor,
@@ -64,6 +64,8 @@
 																	});
 					}
 					console.log(results);
+					console.log(dcolor);
+					console.log(koepenCircle);
 				},
 				complete: function() {
 					console.log("All parsing done");
