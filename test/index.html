@@ -46,8 +46,9 @@
 			var file = datafile
 			
 			Papa.parse(file, {
-				header: true,
+				header: true
 				dynamicTyping: true,
+				delimiter: ";"
 				complete: function(results) {
 					csv = [];
 					for(idx in results["data"]) {
@@ -80,7 +81,7 @@
 			  mapOptions);
 
 		  var file = '../Data/guatemala-cleaned-short.csv'
-		  handleFile(file)	
+		  handeFile(file)	
 		}
 		
 		$(document).ready(function(){
