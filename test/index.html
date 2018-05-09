@@ -50,7 +50,7 @@
 				header: true,
 				worker: true,
 				dynamicTyping: true,
-				step: function(results) {
+				complete: function(results) {
 					csv = [];
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
@@ -74,12 +74,10 @@
     																},
 		  													});
 */
-					}	
-				},
-				complete: function() {
+					}
 					loadHeatmap(csv);
 					console.log(csv);
-					console.log("All parsing done");
+					console.log("All parsing done");	
 				}
 			});
 		}
