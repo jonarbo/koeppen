@@ -53,14 +53,11 @@
 							});
 						}
 
-						$("#max-label").html("max: "+numberWithCommas(max));
-						$("#max-slider").slider("option","max",max);
-						$("#max-slider").slider("option","value",max);
 					}
 					
 					console.log(results);
 										
-					loadHeatmap(csv);
+					//loadHeatmap(csv);
 				}
 			});
 		}
@@ -74,20 +71,6 @@
 
 		  map = new google.maps.Map(document.getElementById('map-canvas'),
 			  mapOptions);
-		}
-		
-		function loadHeatmap(csv) {
-			var pointArray = new google.maps.MVCArray(csv);
-
-			if(heatmap) heatmap.setMap(null);
-			
-			heatmap = new google.maps.visualization.HeatmapLayer({
-				data: pointArray,
-				radius: $("#radius-slider").slider("value"),
-				opacity: $("#opacity-slider").slider("value")
-			});
-			
-			heatmap.setMap(map);
 		}
 		
 		$(document).ready(function(){
