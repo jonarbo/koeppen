@@ -123,7 +123,6 @@
 		}
 		
 		$(document).ready(function(){
-			$("#csv-file").change(handleFileSelect);
 			
 			google.maps.event.addDomListener(window, 'load', initialize);
 			
@@ -162,6 +161,11 @@
 	</script>
 </head>
 <body>
+
+	<div id="header"> 
+		<img src="../img/CCBLogo.jpg" alt="Consortium for Capacity Building" >
+		<h1>Modified KOEPPEN for ENOS</h1>
+	</div>
 		
 	<!-- there goes the map -->
 	<div id="map-canvas"> </div>
