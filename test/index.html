@@ -12,6 +12,9 @@
 	<script src="../js/papaparse.min.js"></script>
 	<script	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpShV7rlMoA4M7-3l1mi9XLYMsLJo8ZpA&v=3.exp&libraries=visualization"></script>
 
+	<script src="//acme.com/javascript/Clusterer2.jsm" type="text/javascript"></script>
+
+
 	<script src="../js/jquery-2.1.1.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
@@ -19,6 +22,7 @@
 	<script>
 		var map, heatmap;
 		var csv = [];
+		var clusterer ;
 
     	// http://stackoverflow.com/a/2901298/562440
 		function numberWithCommas(x) {
@@ -61,10 +65,9 @@
 							});
 */			
 						var color = getColor(row["RR"]) 
-/*
+
 						var marker = new google.maps.Marker({
 													            position: new google.maps.LatLng( row["lat"],row["lon"] ),
-        													    map: map,
 																icon: {
 																		path: google.maps.SymbolPath.CIRCLE,
 																		scale: 1,
@@ -74,7 +77,9 @@
 																		fillOpacity: 0.5,
     																},
 		  													});
-*/
+							
+						clusterer.AddMarker(marker,"text");
+/*
 						var circle = new google.maps.Circle({
 															map: map,
 															center: new google.maps.LatLng( row["lat"],row["lon"] ),
@@ -84,7 +89,7 @@
 															fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
 															fillOpacity: 0.5
 						});
-
+*/
 					}
 					//loadHeatmap(csv);					
 					console.log("All parsing done");	
@@ -113,6 +118,8 @@
 
 		  map = new google.maps.Map(document.getElementById('map-canvas'),
 			  mapOptions);
+
+		  clusterer = new Clusterer(map);
 
 		  //var file = '/Users/jonarbo/Devel/koeppen/Data/guatemala-cleaned-short.csv'
 		  //handleFile(file)	
