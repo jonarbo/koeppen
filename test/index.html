@@ -48,15 +48,14 @@
 			
 			Papa.parse(file, {
 				header: true,
+				worker: true,
 				dynamicTyping: true,
-				delimiter: ";",
-				complete: function(results) {
+				step: function(results) {
 					csv = [];
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
 						var dcolor = getColor(row["RR"]) 
 						var koeppenCircle = new google.maps.Circle({
-																	scale:2,
 																	strokeColor: dcolor,
 																	strokeWeight: 1,
 																	fillColor:   dcolor,
@@ -65,9 +64,9 @@
 																	center:  new google.maps.LatLng(row["lat"],row["lon"])
 																	});
 					}
-
+				},
+				complete: function() {
 					console.log(results);
-										
 				}
 			});
 		}
