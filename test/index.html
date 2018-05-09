@@ -18,7 +18,6 @@
 
 	<script>
 		var map;
-		var csv = [];
 
     	// http://stackoverflow.com/a/2901298/562440
 		function numberWithCommas(x) {
@@ -55,7 +54,7 @@
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
 						var dcolor = getColor(row["RR"]) 
-						var koeppenCircle = new google.maps.Circle({
+						new google.maps.Circle({
 																	strokeColor: dcolor,
 																	strokeWeight: 1,
 																	fillColor:   dcolor,
