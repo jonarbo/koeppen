@@ -7,11 +7,10 @@
       padding: 0px;
 			font-family: 'Raleway', sans-serif;
 			z-index:1;
-    }
-  
-		#draggable {
+   		}
+  		#draggable {
 			z-index:100; 
-			background-color: rgba(200,200,255,.7); 
+			background-color: rgba(50,155,055,.7); 
 			width: 250px;
 			padding: 20px;
 			position:absolute;
@@ -38,13 +37,14 @@
 
 		#radius-slider .ui-slider-handle, 
 		#opacity-slider .ui-slider-handle,
-		#max-slider .ui-slider-handle {
-			cursor:pointer;
-		}
   </style>
 	
 	<script src="../js/papaparse.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+	<script async defer
+		src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+	<script async defer
+    	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpShV7rlMoA4M7-3l1mi9XLYMsLJo8ZpA&callback=initMap">
+    </script>
 
 	<script src="../js/jquery-2.1.1.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
@@ -54,7 +54,7 @@
 		var map, pointarray, heatmap;
 		var csv = [];
 
-    // http://stackoverflow.com/a/2901298/562440
+    	// http://stackoverflow.com/a/2901298/562440
 		function numberWithCommas(x) {
 				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		}
@@ -195,9 +195,3 @@
 		<div id="max-slider"></div>
 	</div>
 </body>
-
-<!--
-https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications
-http://www.html5rocks.com/en/tutorials/file/dndfiles/
-http://blog.teamtreehouse.com/reading-files-using-the-html5-filereader-api
--->
