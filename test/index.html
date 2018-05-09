@@ -61,13 +61,12 @@
 																icon: {
 																		path: google.maps.SymbolPath.CIRCLE,
 																		scale: 8.5,
-																		fillColor: "#F00",
-																		fillOpacity: 0.4,
-																		strokeWeight: 0.4
+																		strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+																		strokeWeight: 1,
+																		fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+																		fillOpacity: 0.5,
     																},
 		  													});
-
-
 					}
 				},
 				complete: function() {
