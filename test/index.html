@@ -157,19 +157,6 @@
 						heatmap.set('opacity', ui.value/100);
 					}
 				});
-
-				$( "#max-slider" ).slider({
-					orientation: "horizontal",
-					range: "min",
-					min: 0,
-					max: 1,
-					value: 0,
-					slide: function(event, ui) {
-						$("#max-label").html("max: " + numberWithCommas(ui.value));
-						if(heatmap == null) return;
-						heatmap.set('maxIntensity', ui.value);
-					}
-				});
 			});
 		});
 	</script>
@@ -177,8 +164,9 @@
 <body>
 	<div id="header"> 
 		<img src="../img/CCBLogo.jpg" alt="Consortium for Capacity Building" >
+		<h1>Modified KOEPPEN for ENOS</h1>
 	</div>
-	<h1>Modified KOEPPEN for ENOS</h1>
+	
 	
 	<!-- there goes the map -->
 	<div id="map-canvas"> </div>
