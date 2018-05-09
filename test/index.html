@@ -55,10 +55,16 @@
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
 						var color = getColor(row["RR"]) 
-						var marker = new google.maps.Marker({
-													            position: new google.maps.LatLng( row["lat"],row["lon"] ),
-        													    map: map
-          													});
+					
+						koepenCircle = new google.maps.Circle({
+																	strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+																	strokeWeight: 1,
+																	fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+																	fillOpacity: 0.5,
+																	map: map,
+																	position:  new google.maps.LatLng(row["lat"],row["lon"])
+																	});
+
 
 					}
 				},
