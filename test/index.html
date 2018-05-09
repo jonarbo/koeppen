@@ -74,11 +74,11 @@
     																},
 		  													});
 */
-					}
-					loadHeatmap(csv);
+					}	
 				},
-				complete: function() {
-					Console.log(csv)
+				complete: function(csv) {
+					loadHeatmap(csv);
+					Console.log(csv);
 					Console.log("All parsing done");
 				}
 			});
