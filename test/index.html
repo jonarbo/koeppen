@@ -18,7 +18,7 @@
 
 	<script>
 		var map;
-		var koepenCircle
+		var csv = [];
 
     	// http://stackoverflow.com/a/2901298/562440
 		function numberWithCommas(x) {
@@ -54,6 +54,12 @@
 					csv = [];
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
+					
+						csv.push({
+								location: new google.maps.LatLng(row["lat"], row["lon"]),
+								weight: row["RR"]
+							});
+/*					
 						var color = getColor(row["RR"]) 
 						var marker = new google.maps.Marker({
 													            position: new google.maps.LatLng( row["lat"],row["lon"] ),
@@ -67,12 +73,25 @@
 																		fillOpacity: 0.5,
     																},
 		  													});
+*/
 					}
 				},
 				complete: function() {
+					loadHeatmap(csv);
 					console.log("All parsing done");
 				}
 			});
+		}
+
+		function loadHeatmap(csv) {
+			var pointArray = new google.maps.MVCArray(csv);
+			if(heatmap) heatmap.setMap(null);
+			
+			heatmap = new google.maps.visualization.HeatmapLayer({
+				data: pointArray
+			});
+			
+			heatmap.setMap(map);
 		}
 		
 		function initialize() {
