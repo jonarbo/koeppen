@@ -75,10 +75,10 @@
 		  													});
 */
 					}
+					loadHeatmap(csv);
 				},
 				complete: function() {
-					loadHeatmap(csv);
-					console.log("All parsing done");
+					Console.log("All parsing done");
 				}
 			});
 		}
@@ -88,7 +88,9 @@
 			if(heatmap) heatmap.setMap(null);
 			
 			heatmap = new google.maps.visualization.HeatmapLayer({
-				data: pointArray
+				data: pointArray,
+				radius: 20,
+				opacity: 0.5
 			});
 			
 			heatmap.setMap(map);
