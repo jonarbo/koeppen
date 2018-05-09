@@ -1,1 +1,152 @@
-<h1>HELLO!!</h1>
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #map {
+        height: 400px;
+        width: 100%;
+       }
+    </style>
+    <script type='text/javascript'> 
+      eqfeed_callback (
+        {"type" : "FeatureCollection" ,
+         "features":
+                 [
+                   { "type":"Feature" ,
+                     "properties": 
+                                    {
+					"R":0.333333333,
+					"RR":1
+                                    },
+                      "geometry": {
+                                        "type":"Point",
+					"coordinates":[-92.306,14.5544]
+                                  }
+                    },
+                   { "type":"Feature" ,
+                     "properties": 
+                                    {
+					"R":0.333333333,
+					"RR":1
+                                    },
+                      "geometry": {
+                                        "type":"Point",
+					"coordinates":[-92.306,14.5592]
+                                  }
+                    },
+                   { "type":"Feature" ,
+                     "properties": 
+                                    {
+					"R":0.333333333,
+					"RR":1
+                                    },
+                      "geometry": {
+                                        "type":"Point",
+					"coordinates":[-92.3012,14.5544]
+                                  }
+                    },
+                   { "type":"Feature" ,
+                     "properties": 
+                                    {
+					"R":0.333333333,
+					"RR":1
+                                    },
+                      "geometry": {
+                                        "type":"Point",
+					"coordinates":[-92.3012,14.5592]
+                                  }
+                    },
+                   { "type":"Feature" ,
+                     "properties": 
+                                    {
+					"R":0.333333333,
+					"RR":1
+                                    },
+                      "geometry": {
+                                        "type":"Point",
+					"coordinates":[-92.2964,14.5448]
+                                  }
+                    }
+                 ]
+        }
+);
+      </script>
+
+
+</head>
+
+  <body>
+   
+    <select id="sel1" style="width:100px;height:25px;margin:5px 0 5px 0;">&#xD;      <option value="" selected>Guatemala</option>&#xD;</select>&#xD;
+  
+
+    <div width=100% id="map"></div>
+    <script>
+      var map;
+
+      function initMap() {
+        // Initial location ... so far Guatemala 
+        var location = {lat: 15.702089, lng: -90.008787};
+        var mapOptions = {  zoom: 7,
+                            center: location  }
+        // Create the map here                     
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+
+        // Create a <script> tag and set the USGS URL as the source.
+        // var script = document.createElement('script');
+        // This example uses a local copy of the GeoJSON stored at
+        // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
+        //script.src = 'https://raw.githubusercontent.com/jonarbo/koeppen/master/scaffold.js';
+        //script.src = 'https://developers.google.com/maps/documentation/javascript/examples/json/earthquake_GeoJSONP.js';
+        //script.src = 'https://cdn.rawgit.com/jonarbo/koeppen/4bc75954/scaffold.js';
+        //script.src = 'https://drive.google.com/uc?export=download&id=1tiERWa3fA7O6SZ_ADd7FwkpG5_NP0vdF';
+        //script.src = 'https://www.dropbox.com/s/imbl4wi776q4lvg/guatemala-cleaned.js?dl=1';
+        //script.src = 'https://www.dropbox.com/s/8e4uetf552ollbd/guatemala-short.js?dl=1';
+        //script.src = 'https://drive.google.com/uc?export=download&confirm=9iBg&id=19Kun5JzA-nFm742nA54tHD20xrQJOvwJ';
+        //script.src = 'https://drive.google.com/uc?export=download&confirm=9iBg&id=1tiERWa3fA7O6SZ_ADd7FwkpG5_NP0vdF';
+        //script.dataType = "jsonp";	     
+        //document.getElementsByTagName('head')[0].appendChild(script);
+
+        map.data.setStyle(function(feature) {
+            var magnitude = feature.getProperty('RR');
+            return {
+                icon: getCircle(magnitude)
+            };
+        });
+      }
+
+      function getCircle(magnitude) {
+        var high = [5, 69, 54];  // color of smallest datum
+        var low = [151, 83, 34];   // color of largest datum
+
+        // delta represents where the value sits between the min and max
+        var delta = magnitude / 3;
+
+        var color = [];
+        for (var i = 0; i < 3; i++) {
+          // calculate an integer color based on the delta
+          color[i] = (high[i] - low[i]) * delta + low[i];
+        }
+        var dcolor = 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ;
+        return {
+          path: google.maps.SymbolPath.CIRCLE,
+          //scale: Math.pow(2, magnitude) / 2,
+          scale:2,
+          strokeColor: dcolor ,
+          strokeWeight: 1,
+          fillColor: dcolor,
+          fillOpacity: 0.5,
+        };
+      }
+
+      function eqfeed_callback(results) {
+        map.data.addGeoJson(results);
+      }
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpShV7rlMoA4M7-3l1mi9XLYMsLJo8ZpA&callback=initMap">
+    </script>
+  </body>
+</html>
