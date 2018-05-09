@@ -123,6 +123,7 @@
 		}
 		
 		$(document).ready(function(){
+			$("#csv-file").change(handleFileSelect);
 			
 			google.maps.event.addDomListener(window, 'load', initialize);
 			
@@ -156,21 +157,32 @@
 						heatmap.set('opacity', ui.value/100);
 					}
 				});
+
+				$( "#max-slider" ).slider({
+					orientation: "horizontal",
+					range: "min",
+					min: 0,
+					max: 1,
+					value: 0,
+					slide: function(event, ui) {
+						$("#max-label").html("max: " + numberWithCommas(ui.value));
+						if(heatmap == null) return;
+						heatmap.set('maxIntensity', ui.value);
+					}
+				});
 			});
 		});
 	</script>
 </head>
 <body>
-
-	
-	<!-- there goes the map -->
+  <!-- there goes the map -->
 	<div id="map-canvas"> </div>
 
   <!-- the draggable input and display controls -->
 	<div id="draggable">
 		<div id="project"><a href="https://github.com/joyofdata/csv-heatmap" target="X">github.com/joyofdata/csv-heatmap</a></div>
-		<select id="selection" style="width:100px;height:25px;margin:5px 0 5px 0;">&#xD;      <option value="" selected>Guatemala</option>&#xD;</select>
-    
+		<input type="file" id="csv-file" name="files"/>
+
 		<div id="radius-label">radius: 20</div>
 		<div id="radius-slider"></div>
 
