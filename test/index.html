@@ -91,25 +91,13 @@
 		}
 		
 		$(document).ready(function(){
-			$("#csv-file").change(handleFileSelect);
+			// $("#csv-file").change(handleFileSelect);
 			google.maps.event.addDomListener(window, 'load', initialize);
 		});
 	</script>
 </head>
 <body>
-  <!-- there goes the map -->
+   <!-- there goes the map -->
 	<div id="map-canvas"> </div>
 
-  <!-- the draggable input and display controls -->
-	<div id="draggable">
-		<div id="project"><a href="https://github.com/joyofdata/csv-heatmap" target="X">github.com/joyofdata/csv-heatmap</a></div>
-		<input type="file" id="csv-file" name="files"/>
-
-		<div id="radius-label">radius: 20</div>
-		<div id="radius-slider"></div>
-
-		<div id="opacity-label">opacity: 0.5</div>
-		<div id="opacity-slider"></div>
-
-	</div>
 </body>
