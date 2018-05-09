@@ -1,9 +1,9 @@
 <head>
 	<style>
-    html, body, #map-canvas {
+    html, body, #map-canvas, #Header {
       height: 100%;
-      margin: 0px;
-      padding: 0px;
+      margin: 10px;
+      padding: 10px;
 			font-family: 'Raleway', sans-serif;
 			z-index:1;
    		}
@@ -80,7 +80,10 @@
 	</script>
 </head>
 <body>
-	<div><h1>Modified KOEPPEN for ENOS</h1></div>
+	<div id="Header">
+		<img src='../img/CCBLogo.jpg' alt="Consortium for Capacity Building">
+		<h1>Modified KOEPPEN for ENOS</h1>
+	</div>
 
    <!-- there goes the map -->
 	<div id="map-canvas"> </div>
