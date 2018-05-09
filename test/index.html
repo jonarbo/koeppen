@@ -36,9 +36,9 @@
 				// calculate an integer color based on the delta
 				color[i] = (high[i] - low[i]) * delta + low[i];
 				}
-				var dcolor = 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ;
+				//var dcolor = 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ;
 
-				return dcolor;	
+				return color;	
 			}
 
 		function handleFile(datafile) {
@@ -53,18 +53,17 @@
 					csv = [];
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
-						var dcolor = getColor(row["RR"]) 
+						var color = getColor(row["RR"]) 
 						var koepenCircle = new google.maps.Circle({
-																	strokeColor: dcolor,
+																	strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
 																	strokeWeight: 1,
-																	fillColor:   dcolor,
+																	fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
 																	fillOpacity: 0.5,
 																	map: map,
 																	center:  new google.maps.LatLng(row["lat"],row["lon"])
 																	});
 					}
 					console.log(results);
-					console.log(dcolor);
 					console.log(koepenCircle);
 				},
 				complete: function() {
