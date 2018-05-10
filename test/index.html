@@ -151,7 +151,8 @@
 					$("#hide").show();
 					$("#show").hide();
     		});
-			
+			$("#show").hide();
+		
 			google.maps.event.addDomListener(window, 'load', initialize);
 		});
 	</script>
@@ -162,7 +163,7 @@
 		<h1 margin="10px" >Modified KOEPPEN for ENOS</h1>
 	</div>
 	<hr>
-	<div id="controls" style="padding:10px" >
+	<div id="controls" style="padding:10px; height: 120px;"   >
 		<input type="file" id="csv-file" name="files" value="Select Data File" style="border-right: 4px dotted black; margin-right:10px" />
 		<button id="clear">Clear</button>
 		<button id="hide">Hide</button>
