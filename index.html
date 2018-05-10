@@ -17,6 +17,7 @@
 			z-index:1;
 
 	}
+	#opacity-slider .ui-slider-handle { cursor: pointer }
   </style>
 	
 	<script src="./js/papaparse.min.js"></script>
@@ -186,6 +187,19 @@
 			});
 			$("#show").hide();
 		
+			$(function() {
+				$( "#opacity-slider" ).slider({
+						orientation: "horizontal",
+						range: "min",
+						min: 0,
+						max: 100,
+						value: 50,
+						slide: function(event, ui) {
+							$("#opacity-label").html("opacity: " + ui.value/100);
+						}
+				});
+			});
+
 			google.maps.event.addDomListener(window, 'load', initialize);
 		});
 	</script>
