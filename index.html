@@ -139,7 +139,9 @@
 		function initialize() {
 		  var mapOptions = {
 			zoom: 1,
-			center: new google.maps.LatLng(15.7,-90)
+			minZoom: 1,
+			center: new google.maps.LatLng(0,0)
+			//center: new google.maps.LatLng(15.7,-90)
 		  };
 
 		  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
