@@ -88,6 +88,21 @@
 		  													});
 */							
 
+						var rectangle = new google.maps.Rectangle({
+															strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+															strokeOpacity: 0.8,
+															strokeWeight: 2,
+															fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+															fillOpacity: 0.8,
+															map: map,
+															bounds: {
+																north:  row["lat"] + 0.05,
+																south:  row["lat"] - 0.05,
+																east:   row["lon"] - 0.05,
+																west:   row["lon"] + 0.05,
+															}
+								});
+/*
 						var circle = new google.maps.Circle({
 															map: map,
 															center: new google.maps.LatLng( row["lat"],row["lon"] ),
@@ -97,8 +112,8 @@
 															fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
 															fillOpacity: 0.8
 						});
-						
-						items.push(circle)
+*/						
+						items.push(rectangle)
 					}
 					//loadHeatmap(csv);	
 					console.log("All parsing done");	
