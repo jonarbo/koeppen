@@ -162,6 +162,9 @@
 					$("#hide").show();
 					$("#show").hide();
     		});
+			$("#clear").click(function() {
+				clearMap()
+			});
 			$("#show").hide();
 		
 			google.maps.event.addDomListener(window, 'load', initialize);
