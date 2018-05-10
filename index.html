@@ -196,6 +196,11 @@
 						value: 50,
 						slide: function(event, ui) {
 							$("#opacity-label").html("opacity: " + ui.value/100);
+							if (items.length != 0 ){
+								for (var i = 0; i < items.length; i++) {
+        							items[i].set('opacity', ui.value/100);
+        						}	
+							}
 						}
 				});
 			});
@@ -219,7 +224,7 @@
 	</div>
 	
 
-		<div id="opacity-label" style="float:left">opacity: 0.5</div> 
+		<div id="opacity-label" style="float:left">opacity: 0.8</div> 
 		<div id="opacity-slider" style="float:left ; width:100%"></div>		
 
 	
@@ -229,7 +234,7 @@
 	<div id="map-canvas">
 	</div>
 
-	
+
 	<hr>
 	<div id="Footer">
 			<center><p style="color: whitesmoke; background-color:#336600; padding:7px; margin-bottom:10px; margin-top:0px">Copyright © 2018 The Consortium for Capacity Building - INSTAAR/University of Colorado in Boulder</p></center>
