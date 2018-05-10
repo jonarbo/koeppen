@@ -60,7 +60,8 @@
 								weight: row["RR"]
 							});
 */			
-						var color = getColor(row["RR"]) 
+						var color = getColor(row["RR"])
+/* 
 						var marker = new google.maps.Marker({
 																map: map,
 													            position: new google.maps.LatLng( row["lat"],row["lon"] ),
@@ -73,8 +74,8 @@
 																		fillOpacity: 0.5,
     																},
 		  													});
-							
-/*
+*/							
+
 						var circle = new google.maps.Circle({
 															map: map,
 															center: new google.maps.LatLng( row["lat"],row["lon"] ),
@@ -84,7 +85,7 @@
 															fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
 															fillOpacity: 0.5
 						});
-*/
+
 					}
 					//loadHeatmap(csv);	
 					console.log("All parsing done");	
