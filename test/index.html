@@ -62,6 +62,7 @@
 */			
 						var color = getColor(row["RR"]) 
 						var marker = new google.maps.Marker({
+																map: map,
 													            position: new google.maps.LatLng( row["lat"],row["lon"] ),
 																icon: {
 																		path: google.maps.SymbolPath.CIRCLE,
