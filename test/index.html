@@ -141,9 +141,11 @@
 		$(document).ready(function(){
 			$("#csv-file").change(handleFile);
 			$("#hide").click(function() {
-					hideItems();
-					$("#hide").hide();
-					$("#show").show();
+					if ( items.length != 0 ) {
+						hideItems();
+						$("#hide").hide();
+						$("#show").show();
+					}
 				});
     	
 			$("#show").click(function() {
@@ -163,8 +165,8 @@
 		<h1 margin="10px" >Modified KOEPPEN for ENOS</h1>
 	</div>
 	<hr>
-	<div id="controls" style="padding:10px; height: 120px;"   >
-		<input type="file" id="csv-file" name="files" value="Select Data File" style="border-right: 4px dotted black; margin-right:10px" />
+	<div id="controls" style="padding:10px; height: 30px;"   >
+		<input type="file" id="csv-file" name="files" style="border-right: 4px dotted black; margin-right:10px; height:25px" />
 		<button id="clear">Clear</button>
 		<button id="hide">Hide</button>
 		<button id="show">Show</button>
