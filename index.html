@@ -94,12 +94,6 @@
 				return color;	
 			}
 
-		function handleFileUrl(datafile) {
-			var download=true;
-			var file = datafile;
-			processFile(file,download)	;
-		};
-
 		function handleFile(datafile) {
 			//var file = datafile
 			var file = datafile.target.files[0];
@@ -220,7 +214,7 @@
 		
 		$(document).ready(function(){
 			$("#csv-file").change(handleFile);
-			$("#go").click(handleFileUrl($("#remotefile").text()))
+			$("#go").click(processFile($("#remotefile").text,true))
 
 			/*	
 			$("#hide").click(function() {
