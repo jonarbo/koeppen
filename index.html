@@ -220,6 +220,7 @@
 		
 		$(document).ready(function(){
 			$("#csv-file").change(handleFile);
+			$("#go").click(handleFileUrl($("#remotefile").text()))
 
 			/*	
 			$("#hide").click(function() {
@@ -305,7 +306,7 @@
 	</div>
 	<div id="controlsUrl" class="tabcontent" style="padding:10px;" >
 		<button id="go">Go</button>
-		<input type="text" onfocus="this.value=''" value="http://" size=75>
+		<input id="remotefile" type="text" onfocus="this.value=''" value="http://" size=75>
 	</div>
 
 
