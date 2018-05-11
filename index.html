@@ -94,11 +94,22 @@
 				return color;	
 			}
 
+		function handleFileUrl(datafile) {
+			var download=true;
+			var file = datafile;
+			processFile(file,download)	;
+		};
+
 		function handleFile(datafile) {
 			//var file = datafile
 			var file = datafile.target.files[0];
-			
+			var download='false';
+			processFile(file,download)	
+		};
+
+		function processFile(file,download)	{
 			Papa.parse(file, {
+				download: download,
 				header: true,
 				worker: true,
 				dynamicTyping: true,
