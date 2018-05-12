@@ -306,19 +306,22 @@
 
 	<div id="advancedPanel">
 		<div id="opacity" style="float:left; margin-top: 15px; margin-bottom: 15px; width:20%;  border: 1px solid #ccc; padding: 10px">
-			<div id="opacity-label">opacity: 0.5</div> 
+			<div id="opacity-label" >opacity: 0.5</div> 
 			<div id="opacity-slider"></div>		
 		</div>
 		
 		<div id="resolution" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
-			Set Resolution<br/>
+			<div style="margin-bottom: 5px"> Set Resolution<br/></div>
 			<input id="resolutionvalue" type="text" onfocus="this.value=''" value="0.05" >	
 			<button id="setRes">OK</button>
 		</div>
 	
 		<div id="scale" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
-			min: <input id="min value" type="text" onfocus="this.value=''" value="0" size="10">
-			max: <input id="min value" type="text" onfocus="this.value=''" value="1" size="10">
+			<div style="margin-bottom: 5px"> 
+				min: <input id="min value" type="text" onfocus="this.value=''" value="0" size="10">
+				max: <input id="min value" type="text" onfocus="this.value=''" value="1" size="10">
+				<button id="setMinMax">Ok</button>
+			</div>
 			<div style="border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">scale</div>	
 		</div> 
 	
