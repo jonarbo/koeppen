@@ -17,7 +17,9 @@
 			z-index:1;
 
 	}
-	#opacity-slider .ui-slider-handle { cursor: pointer }
+	#opacity-slider    .ui-slider-handle { cursor: pointer }
+	#resolution-slider .ui-slider-handle { cursor: pointer }
+
 
 
 	/* Style the tab */
@@ -237,7 +239,23 @@
 			$("#clear").click(function() {
 				clearMap()
 			});
-			
+			$(function() {
+				$( "#resolution-slider" ).slider({
+						orientation: "horizontal",
+						range: "min",
+						min: 0.1,
+						max: 0.01,
+						value: 0.05,
+						slide: function(event, ui) {
+							$("#resolution-label").html("resolution: " + ui.value);
+							if (items.length != 0 ){
+								for (var i = 0; i < items.length; i++) {
+        							items[i].set('resolution', ui.value);
+        						}	
+							}
+						}
+				});
+			});
 			$(function() {
 				$( "#opacity-slider" ).slider({
 						orientation: "horizontal",
@@ -314,10 +332,12 @@
 			<div style="margin-bottom: 5px"> Set Resolution<br/></div>
 			<input id="resolutionvalue" type="text" onfocus="this.value=''" value="0.05" >	
 			<button id="setRes">OK</button>
+			<div id="resolution-label" style="margin-bottom: 8px">opacity: 0.5</div> 
+			<div id="resolution-slider"></div>		
 		</div>
 	
 		<div id="scale" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
-			<div style="border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">0</div>	
+			<div style="text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">0</div>	
 		</div> 
 	
 
