@@ -243,16 +243,11 @@
 				$( "#resolution-slider" ).slider({
 						orientation: "horizontal",
 						range: "min",
-						min: 0.1,
-						max: 0.01,
+						min: 0.01,
+						max: 0.1,
 						value: 0.05,
 						slide: function(event, ui) {
 							$("#resolution-label").html("resolution: " + ui.value);
-							if (items.length != 0 ){
-								for (var i = 0; i < items.length; i++) {
-        							items[i].set('resolution', ui.value);
-        						}	
-							}
 						}
 				});
 			});
