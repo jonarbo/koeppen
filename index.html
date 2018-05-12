@@ -214,7 +214,7 @@
 		$(document).ready(function(){
 			$("#csv-file").change(handleFile);
 			$("#go").click( function(){
-				processFile($("#remotefile").text,true);
+				processFile($("#remotefile").text(),true);
 			}); 
 
 			/*	
@@ -301,7 +301,7 @@
 	</div>
 	<div id="controlsUrl" class="tabcontent" style="padding:10px;" >
 		<button id="go">Go</button>
-		<input id="remotefile" type="text" onfocus="this.value=''" value="http://" size=75>s
+		<input id="remotefile" type="text" onfocus="this.value=''" value="http://" size=75>
 	</div>
 
 	<div id="advancedPanel">
