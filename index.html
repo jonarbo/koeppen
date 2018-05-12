@@ -278,14 +278,14 @@
 			$( function() {
     var handle = $( "#custom-handle" );
     $( "#slider" ).slider({ 
-		min: 0,
+		min: 1,
 						max: 100,
-						value: 50,
+						value: 5,
       create: function() {
         handle.text( $( this ).slider( "value" ) );
       },
       slide: function( event, ui ) {
-        handle.text( ui.value );
+        handle.text( ui.value/100 );
       }
     });
   } );
