@@ -17,10 +17,17 @@
 			z-index:1;
 
 	}
+	
 	#opacity-slider    .ui-slider-handle { cursor: pointer }
 	#resolution-slider .ui-slider-handle { cursor: pointer }
-
-
+	#custom-handle {
+    width: 3em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    text-align: center;
+    line-height: 1.6em;
+  }
 
 	/* Style the tab */
 	.tab {
@@ -247,7 +254,7 @@
 						max: 0.1,
 						value: 0.05,
 						slide: function(event, ui) {
-							$("#resolution-label").html("resolution: " + ui.value);
+							$("#resolution-label").html("resolution: " + ui.value + " degrees");
 						}
 				});
 			});
@@ -268,6 +275,20 @@
 						}
 				});
 			});
+			$( function() {
+    var handle = $( "#custom-handle" );
+    $( "#slider" ).slider({ 
+		min: 0,
+						max: 100,
+						value: 50,
+      create: function() {
+        handle.text( $( this ).slider( "value" ) );
+      },
+      slide: function( event, ui ) {
+        handle.text( ui.value );
+      }
+    });
+  } );
 			$("#localFile").click(function() {
 				$("#controls").show();
 				$("#controlsUrl").hide();
@@ -324,11 +345,14 @@
 		</div>
 		
 		<div id="resolution" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
-			<div id="resolution-label" style="margin-bottom: 8px">opacity: 0.5</div> 
+			<div id="resolution-label" style="margin-bottom: 8px">resolution: 0.05 degrees</div> 
 			<div id="resolution-slider"></div>		
 		</div>
 	
 		<div id="scale" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
+			<div id="slider">
+				<div id="custom-handle" class="ui-slider-handle"></div>
+			  </div>
 			<div style="text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">0</div>	
 		</div> 
 	
