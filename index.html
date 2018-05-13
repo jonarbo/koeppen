@@ -20,7 +20,14 @@
 	
 	#opacity-slider    .ui-slider-handle { cursor: pointer }
 	#resolution-slider .ui-slider-handle { cursor: pointer }
-
+	#custom-handle {
+    width: 3em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    text-align: center;
+    line-height: 1.6em;
+  }
 
 	/* Style the tab */
 	.tab {
@@ -273,7 +280,7 @@
     $( "#slider" ).slider({ 
 		min: 1,
 						max: 100,
-						value: 5,
+						value: 0.05,
       create: function() {
         handle.text( $( this ).slider( "value" ) );
       },
@@ -338,14 +345,13 @@
 		</div>
 		
 		<div id="resolution" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
-			<div id="resolution-label" style="margin-bottom: 8px">resolution: 0.05 degrees</div> 
-			<div id="resolution-slider"></div>		
+			<div id="slider">
+				<div id="custom-handle" class="ui-slider-handle"></div>
+			  </div>		
 		</div>
 	
 		<div id="scale" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
-			<div id="slider">
-				<div id="custom-handle" class="ui-slider-handle"></div>
-			  </div>
+
 			<div style="text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">0</div>	
 		</div> 
 	
