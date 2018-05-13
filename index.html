@@ -28,14 +28,7 @@
 
 	#opacity-slider    .ui-slider-handle { cursor: pointer }
 	#resolution-slider .ui-slider-handle { cursor: pointer }
-	#custom-handle {
-    width: 3em;
-    height: 1.6em;
-    top: 50%;
-    margin-top: -.8em;
-    text-align: center;
-    line-height: 1.6em;
-  }
+
 
 	/* Style the tab */
 	.tab {
@@ -77,10 +70,6 @@
 	
 	<script src="./js/papaparse.min.js"></script>
 	<script	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpShV7rlMoA4M7-3l1mi9XLYMsLJo8ZpA&v=3.exp&libraries=visualization"></script>
-
-	<script src="./js/jquery-2.1.1.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 
 	<script>
 		var map, heatmap;
@@ -234,23 +223,6 @@
 				processFile($("#remotefile").text(),true);
 			}); 
 
-			/*	
-			$("#hide").click(function() {
-					if ( items.length != 0 ) {
-						hideItems();
-						$("#hide").hide();
-						$("#show").show();
-					}
-				});
-    	
-			$("#show").click(function() {
-					showItems();
-					$("#hide").show();
-					$("#show").hide();
-    		});
-			$("#show").hide();
-			*/
-
 			$("#clear").click(function() {
 				clearMap()
 			});
@@ -283,20 +255,7 @@
 						}
 				});
 			});
-			$( function() {
-    var handle = $( "#custom-handle" );
-    $( "#slider" ).slider({ 
-		min: 1,
-						max: 100,
-						value: 0.05,
-      create: function() {
-        handle.text( $( this ).slider( "value" ) );
-      },
-      slide: function( event, ui ) {
-        handle.text( ui.value/100 );
-      }
-    });
-  } );
+
 			$("#localFile").click(function() {
 				$("#controls").show();
 				$("#controlsUrl").hide();
@@ -353,9 +312,6 @@
 		</div>
 		
 		<div id="resolution" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
-			<div id="slider">
-				<div id="custom-handle" class="ui-slider-handle"></div>
-			  </div>		
 		</div>
 	
 		<div id="scale" style="float:left; margin-left: 25px;margin-top: 15px; margin-bottom: 15px; width:20%;border: 1px solid #ccc; padding:10px">
