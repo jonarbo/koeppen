@@ -4,7 +4,6 @@
 	<link rel="stylesheet" href="../css/themes/default/jquery.mobile-1.4.5.min.css">
 	<link rel="stylesheet" href="../_assets/css/jqm-demos.css">
 	<script src="../js/jquery.js"></script>
-	<script src="../_assets/js/index.js"></script>
 	<script src="../js/jquery.mobile-1.4.5.min.js"></script>
 
 	<style>
@@ -66,9 +65,32 @@
 </head>
 <body>
 
+		<script>
+				var map, heatmap;
+				var csv = [];
+				var items =[];
+
+				$(document).ready(function(){
+					$("#scalemin").attr("size","10");
+				}
+		</script>
+
+		<div id="Header">
+			<img src='./img/CCBLogo.jpg' alt="Consortium for Capacity Building">
+			<h1 margin="10px" >Modified KOEPPEN for ENOS</h1>
+		</div>
+
+		<div class="tab">
+			<button id="localFile" class="tablinks" >Local File</button>
+			<button id="urlFile" class="tablinks" >URL</button>
+			<button id="clear">Clear</button>
+			<button id="advanced">Show Advanced Config</button>
+			<button id="advancedHide">Hide Advanced Config</button>
+		</div>	
 
 
-	
+
+
 
 
 
@@ -77,37 +99,36 @@
 
 
 		<div id="advancedPanel">
-				<div id="opacity" style="float:left; margin-top: 15px; margin-bottom: 15px; width:40%;  border: 1px solid #ccc; padding: 10px">
-					<div id="opacity-label" style="margin-bottom: 8px">Opacity:</div> 
-						<div>
-							<form>
+    					<div class="ui-block-a" style="width:40%">
+							<div class="ui-bar ui-bar-a" style="height:60px">
+								Opacity:
 								<input type="range" name="slider-2" id="slider-2" data-highlight="true" min="0" max="100" value="50">
-							</form>
-						</div>
-				</div>
-				
-				<div id="resolution" style="float:left; margin-left: 25px; margin-top: 15px; margin-bottom: 15px; width:40%;border: 1px solid #ccc; padding:10px">
-						<div>
-								<div id="resolution-label" style="margin-bottom: 8px">Resolution in degrees:</div> 
-								<form>
-									<input type="range" name="slider-2" id="slider-2" data-highlight="true" min="0.01" max="0.1" step="0.01" value="0.05">
-								</form>
 							</div>
-				</div>
-			
-				<div id="scale" style="clear:both; margin-left: 25px; width:80%;border: 1px solid #ccc; padding:10px">
-						<form>
-							    <div class="ui-field-contain">
-									<div style="text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">|</div>	
-										scale:
-								        <div data-role="rangeslider" >
-								           <input type="range" name="range-8a" id="range-8a" min="0" max="100" value="0">
-							               <input type="range" name="range-8b" id="range-8b" min="0" max="100" value="100">
-								        </div>
-								    </div>
-								</form>
-				</div>
-			
+						</div>
+    					<div class="ui-block-b" style="width:40%">
+							<div class="ui-bar ui-bar-a" style="height:60px">
+								Resolution (deg)
+								<input type="range" name="slider-2" id="slider-2" data-highlight="true" min="0.01" max="0.1" step="0.01" value="0.05">
+							</div>
+						</div>
+					
+						<div class="ui-block-a" style="width:10%">
+							<div class="ui-bar ui-bar-a" style="height:50px">
+								<input type="number" data-clear-btn="false" name="scalemax" pattern="[0-9][0-9][0-9]" id="scalemax" value="3" size="4">
+							</div>
+						</div>
+
+			    		<div class="ui-block-b" style="width:60%;">
+							<div class="ui-bar ui-bar-a" style="height:50px"><label style="text-align: center">scale</label>
+								<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">|</div>
+							</div>
+						</div>
+
+    					<div class="ui-block-c" style="width:10%">
+							<div class="ui-bar ui-bar-a" style="height:50px">
+								<input type="number" data-clear-btn="false" name="scalemax" pattern="[0-9][0-9][0-9]" id="scalemax" value="3">
+	    					</div>
+						</div>
 			</div>
 
 		<!-- there goes the map -->
