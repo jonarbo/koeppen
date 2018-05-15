@@ -26,10 +26,6 @@
 	
 		}
 	
-		#opacity-slider    .ui-slider-handle { cursor: pointer }
-		#resolution-slider .ui-slider-handle { cursor: pointer }
-	
-	
 		/* Style the tab */
 		.tab {
 			overflow: hidden;
@@ -69,10 +65,59 @@
 		  </style>
 </head>
 <body>
-				<div>
-				<form>
-                    <input type="range" name="slider-2" id="slider-2" data-highlight="true" min="0" max="100" value="50">
-				</form>
-                </div>
+
+
+
+	
+
+
+
+
+
+
+
+		<div id="advancedPanel">
+				<div id="opacity" style="float:left; margin-top: 15px; margin-bottom: 15px; width:40%;  border: 1px solid #ccc; padding: 10px">
+					<div id="opacity-label" style="margin-bottom: 8px">Opacity:</div> 
+						<div>
+							<form>
+								<input type="range" name="slider-2" id="slider-2" data-highlight="true" min="0" max="100" value="50">
+							</form>
+						</div>
+				</div>
+				
+				<div id="resolution" style="float:left; margin-left: 25px; margin-top: 15px; margin-bottom: 15px; width:40%;border: 1px solid #ccc; padding:10px">
+						<div>
+								<div id="resolution-label" style="margin-bottom: 8px">Resolution in degrees:</div> 
+								<form>
+									<input type="range" name="slider-2" id="slider-2" data-highlight="true" min="0.01" max="0.1" step="0.01" value="0.05">
+								</form>
+							</div>
+				</div>
+			
+				<div id="scale" style="clear:both; margin-left: 25px; width:80%;border: 1px solid #ccc; padding:10px">
+						<form>
+							    <div class="ui-field-contain">
+									<div style="text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">|</div>	
+										scale:
+								        <div data-role="rangeslider" >
+								           <input type="range" name="range-8a" id="range-8a" min="0" max="100" value="0">
+							               <input type="range" name="range-8b" id="range-8b" min="0" max="100" value="100">
+								        </div>
+								    </div>
+								</form>
+				</div>
+			
+			</div>
+
+		<!-- there goes the map -->
+		<div id="map-canvas">
+		</div>
+		
+		
+		<div id="Footer">
+			<center><p style="color: whitesmoke; background-color:#336600; padding:7px; margin-bottom:10px; margin-top:0px; font-size: 10px;">Copyright © 2018 The Consortium for Capacity Building - INSTAAR/University of Colorado in Boulder</p></center>
+		</div>	
+	
 </body>
 </html>
