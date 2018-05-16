@@ -16,6 +16,9 @@
 	<script src="https://www.google.com/jsapi?key=AIzaSyBpShV7rlMoA4M7-3l1mi9XLYMsLJo8ZpA"></script>
 	<script src="https://apis.google.com/js/client.js?onload=initPicker"></script>
 
+	<!-- color -->
+	<script type="text/javascript" src="./js/Colour.js"></script>
+
 	<style>
 		#Header {
 			margin: 30px;
@@ -56,12 +59,15 @@
 
 	  <script>
 		var map;
-		var csv = [];
+		var RR = [];
 		var items =[];
+		var lats = [];
+		var lons = [];
 		var max= 0;
-		var min=0;
+		var min = 0;
 		var opacity=50;
 		var res=0.05;
+		var onItem = null;
 
 	 	// http://stackoverflow.com/a/2901298/562440
 		function numberWithCommas(x) {
@@ -69,19 +75,19 @@
 		}
 
 		function getColor(magnitude) {
-			var high = [5, 69, 54];  // color of smallest datum
-			var low = [151, 83, 34];   // color of largest datum
+			//var high = [5, 69, 54];  // color of smallest datum
+			var high = [0, 100, 50];  // color of smallest datum
+			//var low = [151, 83, 34];   // color of largest datum
+			var low = [120, 100, 50];   // color of largest datum
 
 			// delta represents where the value sits between the min and max
-			var delta = magnitude / 1;
-			//var delta = magnitude / 3;
-
+			var delta = magnitude / (max-min);
+			
 			var color = [];
 			for (var i = 0; i < 3; i++) {
 				// calculate an integer color based on the delta
 				color[i] = (high[i] - low[i]) * delta + low[i];
 			}
-			//var dcolor = 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ;
 			return color;	
 		}
 
@@ -101,11 +107,11 @@
 				dynamicTyping: true,
 				withCredentials: true,
 				complete: function(results) {
-					csv = [];
-					var minlat=0;
-					var maxlat=0;
-					var minlon=0;
-					var maxlon=0;
+					RR = [];
+					var minlat=90;
+					var maxlat=-90;
+					var minlon=180;
+					var maxlon=-180;
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
 						// get min and max values of the scale 
@@ -118,13 +124,7 @@
 						if ( row["lon"] > maxlon ) { maxlon = row["lon"] ; }
 						if ( row["lon"] < minlon ) { minlon = row["lon"] ; }
 						
-/*				
-						csv.push({
-								location: new google.maps.LatLng(row["lat"], row["lon"]),
-								weight: row["RR"]
-							});
-*/			
-						var color = getColor(row["RR"])
+						// var color = getColor(row["RR"])
 /* 
 						var marker = new google.maps.Marker({
 																map: map,
@@ -142,10 +142,10 @@
 
 						var tile = res/2;
 						var rectangle = new google.maps.Rectangle({
-															strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-															strokeOpacity: 0.8,
+															//strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+															strokeOpacity: opacity/100,
 															strokeWeight: 2,
-															fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+															//fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
 															fillOpacity: opacity/100,
 															map: map,
 															bounds: {
@@ -165,11 +165,31 @@
 															fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
 															fillOpacity: 0.8
 						});
-*/						
-						items.push(rectangle)
+*/
+						google.maps.event.addListener(rectangle,"mouseover",function(){
+							var coloratpoint = this.get('fillColor');
+							onItem = items.indexOf(this);
+						}); 
+						google.maps.event.addListener(rectangle,"click",function(){
+							if ( onItem == null ) {return;}
+							var place = new google.maps.LatLng( lats[onItem], lons[onItem]);
+							var infowindow = new google.maps.InfoWindow(); 
+							infowindow.setContent("Value: " + RR[onItem] + "<br/>Lat: "+ lats[onItem] + "<br/>Lon: " + lons[onItem]);
+							infowindow.setPosition(place);
+							infowindow.open(map);
+						}); 
+
+
+						items.push(rectangle);
+						RR.push(row["RR"]);
+						lats.push(row["lat"]);
+						lons.push(row["lon"]);
 					}
+					updateItems();
 					updateScaleControl();
-					var center = new google.maps.LatLng( maxlat, minlon);
+					//var center = new google.maps.LatLng( maxlat, minlon);
+					var center = new google.maps.LatLng( (minlat+maxlat)/2, (minlon+maxlon)/2 );
+					
 					map.panTo(center);
 					var GLOBE_WIDTH = 256; // a constant in Google's map projection
 					var west = minlon;
@@ -178,12 +198,12 @@
 					if (angle < 0) {
  						 angle += 360;
 					}
-					var zoom = Math.round(Math.log(2000 * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+					var zoom = Math.round(Math.log(256 * 360 / angle / GLOBE_WIDTH) / Math.LN2);
 					map.setZoom(zoom);	
 					console.log("All parsing done");	
 				}
 			});
-		}
+		};
 		
 		function updateScaleControl() {
 			$("#scalemin").val(min);
@@ -199,44 +219,89 @@
 			for (var i = 0; i < items.length; i++) {
         		items[i].setMap(null);
         	}	
-		}
+		};
+
+		function setMaxScale (value) {
+			max = value;	
+			updateItems();	
+		}; 
+
+		function setMinScale (value) {
+			min = value;
+			updateItems();
+		}; 
+		
+		function updateItems() {
+			opacity = $("#slider-opacity").val();
+			var oldTile = res/2;	
+			res = $("#slider-res").val();
+			var tile = res/2;			
+			var north, south, east,west ; 
+
+			for (var i = 0; i < items.length; i++) {
+				var color = getColor(RR[i]);
+				north = lats[i] + tile;
+				south = lats[i] - tile;
+				east  = lons[i] + tile,
+				west  = lons[i] - tile,
+
+        		items[i].setOptions({ 
+								strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+								strokeOpacity: opacity/100,
+								strokeWeight: 2,
+								fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+								fillOpacity: opacity/100,
+								bounds: {
+										north: north,
+										south: south,
+										east:  east,
+										west:  west,
+									}
+					}) ;
+        	}
+		};
 
 		// When the page is loaded
 		$(document).ready(function(){
-
 			$("#localfile").change(handleFile);	
 			$("#csv-file").click( function(){
-					$("#selectmenu").attr('selectedIndex', 0);
 					$("#localfile").click();
-			});
-			
+				});
+				
 			$("#options").click(function(){
-				if ( $('#advancedPanel').is(":visible") ){ 
-				    $('#advancedPanel').hide();
-				} else {
-   	 				$('#advancedPanel').show();
-				}
-			});
+					if ( $('#advancedPanel').is(":visible") ){ 
+						$('#advancedPanel').hide();
+					} else {
+							$('#advancedPanel').show();
+					}
+				});
 
 			$("#UrlGDrive").click( function(){
-				initPicker();
-			});
+					initPicker();
+				});
 
 			$("#UrlDropbox").click( function(){
-				noteAttachdb();
-			});
+					noteAttachdb();
+				});
 
 			$("#clear").click(function() {
-				clearMap()
-			});
+					clearMap()
+				});
 
 			$("#selectmenu").change( function(){
-				var selected = $(this).val();
-				
-				if (selected == "Choose" ) {return;}
-				var file = "https://jonarbo.github.io/koeppen/Data/" + selected;
-				processFile(file,true)	;
-			});
+					var selected = $(this).val();	
+					if (selected == "Choose" ) {return;}
+					var file = "https://jonarbo.github.io/koeppen/Data/" + selected;
+					processFile(file,true)	;
+				});
+						
+			$("#refresh").click(function() {
+					res = $("#slider-res").val();
+					opacity=$("#slider-opacity").val();
+					setMaxScale( $("#scalemax").val() );
+					setMinScale( $("#scalemin").val() );
+					updateItems();	
+				});
 
 			$("#advancedPanel").hide();
 			$("#UrlMenu").hide();
@@ -385,7 +450,7 @@
     					<div class="ui-block-b" style="width:45%">
 							<div class="ui-bar ui-bar-a" style="height:60px">
 								Resolution (deg)
-								<input type="range" name="slider-2" id="slider-res" data-highlight="true" min="0.01" max="0.1" step="0.01" value="0.05">
+								<input type="range" name="slider-2" id="slider-res" data-highlight="true" min="0.01" max="0.5" step="0.01" value="0.05">
 							</div>
 						</div>
 					
@@ -397,7 +462,7 @@
 
 			    		<div class="ui-block-b" style="width:70%;">
 							<div class="ui-bar ui-bar-a" style="height:50px"><label style="text-align: center">scale</label>
-								<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)">|</div>
+								<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)"></div>
 							</div>
 						</div>
 
@@ -406,6 +471,7 @@
 								<input type="number" data-clear-btn="false" name="scalemax" pattern="[0-9][0-9][0-9]" id="scalemax" value="0">
 	    					</div>
 						</div>
+						<button id="refresh"  style="width: 15%"  data-icon="refresh">Update</button>
 		</div>
 		
 		<!-- there goes the map -->
