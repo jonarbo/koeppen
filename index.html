@@ -206,7 +206,7 @@
 
 			$("#localfile").change(handleFile);	
 			$("#csv-file").click( function(){
-					$("#selectmenu").attr('selectedIndex', -1);
+					$("#selectmenu").attr('selectedIndex', 0);
 					$("#localfile").click();
 			});
 			
@@ -232,7 +232,7 @@
 
 			$("#selectmenu").change( function(){
 				var selected = $(this).val();
-				if (selected != 0 ) {return;}
+				if (selected != "Choose" ) {return;}
 				var file = "https://jonarbo.github.io/koeppen/Data/" + selected;
 				processFile(file,true)	;
 			});
@@ -364,7 +364,7 @@
 					<button id="UrlDropbox" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-dropbox">Dropbox</button>	
 					<!-- <button id="clear"   data-icon="recycle">Clear</button> -->
 			    	<select  data-icon="bullets" name="select-native" id="selectmenu">
-					        <option value=0 >Our Data</option>
+					        <option value="Choose" >Our Data</option>
 					        <optgroup label="South America"  >
 					            <option value="guatemala.csv">Guatemala</option>
 					        </optgroup>
