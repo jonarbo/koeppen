@@ -232,7 +232,8 @@
 
 			$("#selectmenu").change( function(){
 				var selected = $(this).val();
-				if (selected != "Choose" ) {return;}
+				
+				if (selected == "Choose" ) {return;}
 				var file = "https://jonarbo.github.io/koeppen/Data/" + selected;
 				processFile(file,true)	;
 			});
