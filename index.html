@@ -345,23 +345,29 @@
 <body>
 		<!-- Header -->
 		<div id="Header">
-			<img src='./img/CCBLogo.jpg' alt="Consortium for Capacity Building">
+			<img src='./img/CCBLogo-transparent.png' alt="Consortium for Capacity Building">
 			<h1 >Modified KOEPPEN for ENOS</h1>
 		</div>
 
 		<!-- Main -->
 		<input type="file" id="localfile" style="display:none">
 		<div id="MainMenu" data-role="controlgroup" data-type="horizontal">
-		    <button id="csv-file" data-icon="action">Load local file</button>
-		    <button id="UrlGDrive" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-gdrive">Pick from GDrive</button>
-			<button id="UrlDropbox" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-dropbox">Pick from Dropbox</button>
-			<button id="clear" data-icon="recycle">Clear</button>
-		 	<button id="options" data-icon="gear">Options</button>
+				    <button id="csv-file" data-icon="action">Load File</button>
+				    <button id="UrlGDrive"  class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-gdrive">GDrive</button>
+					<button id="UrlDropbox" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-dropbox">Dropbox</button>	
+					<!-- <button id="clear"   data-icon="recycle">Clear</button> -->
+			    	<select  data-icon="bullets" name="select-native-4" id="select-native-4">
+					        <option>Our Data</option>
+					        <optgroup label="South America"  >
+					            <option value="1">Guatemala</option>
+					        </optgroup>
+					    </select>
+			 	<button id="options" data-icon="gear">Options</button>
 		</div>
+		
 
 		<!-- Menu for Advanced Options -->
 		<div id="advancedPanel">
-
     					<div class="ui-block-a" style="width:45%">
 							<div class="ui-bar ui-bar-a" style="height:60px">
 								Opacity:
