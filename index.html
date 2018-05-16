@@ -231,7 +231,7 @@
 
 			$("#selectmenu").change( function(){
 				var selected = $(this).val();
-				var file = "https://https://jonarbo.github.io/koeppen/Data/" + selected +".csv";
+				var file = "https://https://jonarbo.github.io/koeppen/Data/" + selected;
 				processFile(file,true)	;
 			});
 
@@ -364,7 +364,7 @@
 			    	<select  data-icon="bullets" name="select-native" id="selectmenu">
 					        <option>Our Data</option>
 					        <optgroup label="South America"  >
-					            <option value="1">Guatemala</option>
+					            <option value="guatemala.csv">Guatemala</option>
 					        </optgroup>
 					    </select>
 			 	<button id="options" data-icon="gear">Options</button>
