@@ -166,9 +166,15 @@
 															fillOpacity: 0.8
 						});
 */
+						google.maps.event.addListener(rectangle,"mouseout",function(){	
+							document.getElementById("log").innerHTML="scale";
+						});		
 						google.maps.event.addListener(rectangle,"mouseover",function(){
 							var coloratpoint = this.get('fillColor');
 							onItem = items.indexOf(this);
+							if ( onItem == null ) {return;}
+							var text =  "Value at <i>Lat</i>: " + "<b>" + lats[onItem] + "</b> , <i>Lon</i>: " +  "<b>" + lons[onItem] + "</b> = " + "<b>" + RR[onItem] + "</b>";
+							document.getElementById("log").innerHTML=text;
 						}); 
 						google.maps.event.addListener(rectangle,"click",function(){
 							if ( onItem == null ) {return;}
@@ -455,14 +461,15 @@
 						</div>
 					
 						<div class="ui-block-a" style="width:10%">
-							<div class="ui-bar ui-bar-a" style="height:50px">
+							<div class="ui-bar ui-bar-a" style="height:50px;">
 								<input type="number" data-clear-btn="false" name="scalemax" pattern="[0-9][0-9][0-9]" id="scalemin" value="0" size="4">
 							</div>
 						</div>
 
 			    		<div class="ui-block-b" style="width:70%;">
-							<div class="ui-bar ui-bar-a" style="height:50px"><label style="text-align: center">scale</label>
-								<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)"></div>
+							<div class="ui-bar ui-bar-a" style="height:50px ; align-content: center">
+									<div  id="log" style="text-align: center; font-size: 12px">scale</div>
+									<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)"></div>
 							</div>
 						</div>
 
@@ -472,6 +479,7 @@
 	    					</div>
 						</div>
 						<button id="refresh"  style="width: 15%"  data-icon="refresh">Update</button>
+					
 		</div>
 		
 		<!-- there goes the map -->
