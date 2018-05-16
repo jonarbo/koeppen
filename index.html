@@ -89,7 +89,7 @@
 		function handleFile(datafile) {
 			var file = document.getElementById("localfile").files[0];
 			var download='false';
-			processFile(file,download)	
+			processFile(file,download)	;
 		};
 
 		function processFile(file,download)	{
@@ -230,6 +230,12 @@
 				clearMap()
 			});
 
+			$("#selectmenu").change( function(){
+				var selected = $(this).val();
+				var file = "./Data/" + selected +".csv";
+				processFile(file,true)	;
+			});
+
 			$("#advancedPanel").hide();
 			$("#UrlMenu").hide();
 			google.maps.event.addDomListener(window, 'load', initialize);
@@ -356,7 +362,7 @@
 				    <button id="UrlGDrive"  class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-gdrive">GDrive</button>
 					<button id="UrlDropbox" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-dropbox">Dropbox</button>	
 					<!-- <button id="clear"   data-icon="recycle">Clear</button> -->
-			    	<select  data-icon="bullets" name="select-native-4" id="select-native-4">
+			    	<select  data-icon="bullets" name="select-native" id="selectmenu">
 					        <option>Our Data</option>
 					        <optgroup label="South America"  >
 					            <option value="1">Guatemala</option>
