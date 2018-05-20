@@ -100,8 +100,11 @@
 		function processFile(file,download)	{
 			opacity = $("#slider-opacity").val();
 			res = $("#slider-res").val();
-			items=[];	
-			Papa.parse(file, {
+			items=[];
+			RR=[];
+			lats=[];
+			lons=[];
+			var parseres = Papa.parse(file, {
 				download: download,
 				header: true,
 //				worker: true,
@@ -115,6 +118,7 @@
 					var maxlon=-180;
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
+
 						// get min and max values of the scale 
 						if ( row["RR"] > max ) { max = row["RR"] ; }
 						if ( row["RR"] < min ) { min = row["RR"] ; }
@@ -124,7 +128,6 @@
 						// get min and max values of long
 						if ( row["lon"] > maxlon ) { maxlon = row["lon"] ; }
 						if ( row["lon"] < minlon ) { minlon = row["lon"] ; }
-
 						// var color = getColor(row["RR"])
 /* 
 						var marker = new google.maps.Marker({
@@ -220,6 +223,9 @@
 		function clearMap(){
 			hideItems();
 			items=[];
+			RR=[];
+			lats=[];
+			lons=[];
 		};
 
 		function hideItems() {
