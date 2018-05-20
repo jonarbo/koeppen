@@ -1,4 +1,4 @@
-latitude;longitude ;Dry_Climat_Freq;Wet_Climat_Freq
+lat;lon ;RR ; Wet_Climat_Freq
 4,3;40,9;0,00;0,13
 4,3;40,95;0,00;0,13
 4,25;40,85;0,00;0,13
