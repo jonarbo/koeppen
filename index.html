@@ -39,12 +39,14 @@
 
 		#map-canvas {
 			padding:20%;
-			margin: 10px;
+			margin-top: 25px;
 		}
 
 		#advancedPanel,#UrlMenu {
-			width: 90%; 
+			width: 109%; 
+			height: 370px;
 			margin: 10px;
+			align-content: center;	
 		}
 
 		.ui-icon-dropbox:after {
@@ -68,6 +70,8 @@
 		var opacity=50;
 		var res=0.05;
 		var onItem = null;
+		var cols = [];
+		var selectedCol = 1;
 
 	 	// http://stackoverflow.com/a/2901298/562440
 		function numberWithCommas(x) {
@@ -104,6 +108,7 @@
 			RR=[];
 			lats=[];
 			lons=[];
+			cols=[];
 			var parseres = Papa.parse(file, {
 				download: download,
 				header: true,
@@ -116,19 +121,39 @@
 					var maxlat=-90;
 					var minlon=180;
 					var maxlon=-180;
+
+					// Get the columns name
+					var options_str="";	
+					var valind = 1;	
+					for (cn in  results["data"][0]) {
+						if ( (cn !== "lat" && cn !== "lon") ){
+							cols.push(cn);
+							//Create and append the options
+							if ( valind == 1) {
+								options_str += '<option selected="selected" value="' + valind + '">' + cn + '</option>';
+							} else {
+								options_str += '<option value="' + valind + '">' + cn + '</option>';
+							}
+							valind = valind + 1;
+						}
+					}
+					options_str += "</select>"
+					document.getElementById("columns").innerHTML = options_str;
+					$("#columns").val(1).attr('selected', true).siblings('option').removeAttr('selected');  
+			
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
 
 						// get min and max values of the scale 
-						if ( row["RR"] > max ) { max = row["RR"] ; }
-						if ( row["RR"] < min ) { min = row["RR"] ; }
+						if ( row[cols[0]] > max ) { max = row[cols[0]] ; }
+						if ( row[cols[0]] < min ) { min = row[cols[0]] ; }
 						// get min and max values of latitude
 						if ( row["lat"] > maxlat ) { maxlat = row["lat"] ; }
 						if ( row["lat"] < minlat ) { minlat = row["lat"] ; }
 						// get min and max values of long
 						if ( row["lon"] > maxlon ) { maxlon = row["lon"] ; }
 						if ( row["lon"] < minlon ) { minlon = row["lon"] ; }
-						// var color = getColor(row["RR"])
+						
 /* 
 						var marker = new google.maps.Marker({
 																map: map,
@@ -189,9 +214,8 @@
 							infowindow.open(map);
 						}); 
 
-
 						items.push(rectangle);
-						RR.push(row["RR"]);
+						RR.push(row[cols[0]]);
 						lats.push(row["lat"]);
 						lons.push(row["lon"]);
 					}
@@ -301,18 +325,19 @@
 					clearMap()
 				});
 
-			$("#selectmenu").change( function(){
+			$("#selectedMenu").change( function(){
 					var selected = $(this).val();	
 					if (selected == "Choose" ) {return;}
 					var file = "https://jonarbo.github.io/koeppen/Data/" + selected;
 					processFile(file,true)	;
 				});
 						
-			$("#refresh").click(function() {
+			$("#update").click(function() {
 					res = $("#slider-res").val();
 					opacity=$("#slider-opacity").val();
 					setMaxScale( $("#scalemax").val() );
 					setMinScale( $("#scalemin").val() );
+       				selectedCol = $("#columns").val();
 					updateItems();	
 				});
 
@@ -442,7 +467,7 @@
 				    <button id="UrlGDrive"  class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-gdrive">GDrive</button>
 					<button id="UrlDropbox" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-dropbox">Dropbox</button>	
 					<!-- <button id="clear"   data-icon="recycle">Clear</button> -->
-			    	<select  data-icon="bullets" name="select-native" id="selectmenu">
+			    	<select  data-icon="bullets" name="select-native" id="selectedMenu">
 					        <option value="Choose" >Our Data</option>
 					        <optgroup label="South America"  >
 					            <option value="guatemala.csv">Guatemala</option>
@@ -457,38 +482,59 @@
 
 		<!-- Menu for Advanced Options -->
 		<div id="advancedPanel">
-    					<div class="ui-block-a" style="width:45%">
-							<div class="ui-bar ui-bar-a" style="height:60px">
-								Opacity:
-								<input type="range" name="slider-2" id="slider-opacity" data-highlight="true" min="0" max="100" value="50">
-							</div>
-						</div>
-    					<div class="ui-block-b" style="width:45%">
+
+						<!-- RESOLUTION -->
+						<div class="ui-block-b" style="width:90%">
 							<div class="ui-bar ui-bar-a" style="height:60px">
 								Resolution (deg)
 								<input type="range" name="slider-2" id="slider-res" data-highlight="true" min="0.01" max="0.5" step="0.01" value="0.05">
 							</div>
 						</div>
-					
+
+						<!-- OPACITY -->
+    					<div class="ui-block-a" style="width:90%">
+							<div class="ui-bar ui-bar-a" style="height:60px">
+								Opacity:
+								<input type="range" name="slider-2" id="slider-opacity" data-highlight="true" min="0" max="100" value="50">
+							</div>
+						</div>
+						
+						<!-- SCALE min -->
 						<div class="ui-block-a" style="width:10%">
 							<div class="ui-bar ui-bar-a" style="height:50px;">
 								<input type="number" data-clear-btn="false" name="scalemax" pattern="[0-9][0-9][0-9]" id="scalemin" value="0" size="4">
 							</div>
 						</div>
-
+						<!-- SCALE -->
 			    		<div class="ui-block-b" style="width:70%;">
 							<div class="ui-bar ui-bar-a" style="height:50px ; align-content: center">
 									<div  id="log" style="text-align: center; font-size: 12px">scale</div>
 									<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)"></div>
 							</div>
 						</div>
-
-    					<div class="ui-block-c" style="width:10%">
+						<!-- SCALE max -->
+						<div class="ui-block-c" style="width:10%; height: 30px;">
 							<div class="ui-bar ui-bar-a" style="height:50px">
 								<input type="number" data-clear-btn="false" name="scalemax" pattern="[0-9][0-9][0-9]" id="scalemax" value="0">
 	    					</div>
 						</div>
-						<button id="refresh"  style="width: 15%;"  data-icon="refresh">Update</button>
+					
+						<!-- COLUMNS -->
+						<div class="ui-block-b" style="width:90%">
+							<div id="select-cols" class="ui-bar ui-bar-a" style="height:80px">
+								Showing:
+									    <select name="columns" id="columns">
+											<option value="1" selected="selected">Unknown yet</option>
+										</select>
+							</div>
+						</div>
+
+						<!-- UPDATE -->
+						<div class="ui-block-b" style="width:90%">
+							<div class="ui-bar ui-bar-a" style="height:60px">
+								<button id="update"  style="width: 15%;"  data-icon="refresh">Update</button>
+							</div>
+						</div>
 					
 		</div>
 		
