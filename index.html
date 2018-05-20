@@ -100,6 +100,7 @@
 		function processFile(file,download)	{
 			opacity = $("#slider-opacity").val();
 			res = $("#slider-res").val();
+			items=[];	
 			Papa.parse(file, {
 				download: download,
 				header: true,
