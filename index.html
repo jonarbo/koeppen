@@ -69,9 +69,15 @@
 		var min = 0;
 		var opacity=50;
 		var res=0.05;
-		var onItem = null;
 		var cols = [];
-		var selectedCol = 1;
+		var selectedCol = 0;
+		var thefile ;
+		var download = false;
+		var mapOptions = {
+			zoom: 2,
+			minZoom: 1,
+			center: new google.maps.LatLng(0,0)
+		};
 
 	 	// http://stackoverflow.com/a/2901298/562440
 		function numberWithCommas(x) {
@@ -96,12 +102,43 @@
 		}
 
 		function handleFile(datafile) {
-			var file = document.getElementById("localfile").files[0];
-			var download='false';
-			processFile(file,download)	;
+			thefile = document.getElementById("localfile").files[0];
+			download = false;
+			processFile()	;
 		};
 
-		function processFile(file,download)	{
+		function reReadFile() {
+			opacity = $("#slider-opacity").val();
+			res = $("#slider-res").val();
+			RR=[];
+			max= 0;
+			min = 0;
+
+			var parseres = Papa.parse(thefile, {
+				download: download,
+				header: true,
+//				worker: true,
+				dynamicTyping: true,
+				withCredentials: true,
+				complete: function(results) {
+					RR = [];
+					for(idx in results["data"]) {
+						var row = results["data"][idx];
+
+						// get min and max values of the scale 
+						if ( row[cols[selectedCol]] > max ) { max = row[cols[selectedCol]] ; }
+						if ( row[cols[selectedCol]] < min ) { min = row[cols[selectedCol]] ; }
+						
+						RR.push(row[cols[selectedCol]]);
+					}
+					updateItems();
+					updateScaleControl();	
+					console.log("All parsing done .. file reRead");	
+				}
+			});
+		};
+
+		function processFile()	{
 			opacity = $("#slider-opacity").val();
 			res = $("#slider-res").val();
 			items=[];
@@ -109,7 +146,14 @@
 			lats=[];
 			lons=[];
 			cols=[];
-			var parseres = Papa.parse(file, {
+			max= 0;
+			min = 0;
+			selectedCol = 0;
+			
+			delete(map);
+			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+			var parseres = Papa.parse(thefile, {
 				download: download,
 				header: true,
 //				worker: true,
@@ -145,8 +189,8 @@
 						var row = results["data"][idx];
 
 						// get min and max values of the scale 
-						if ( row[cols[0]] > max ) { max = row[cols[0]] ; }
-						if ( row[cols[0]] < min ) { min = row[cols[0]] ; }
+						if ( row[cols[selectedCol]] > max ) { max = row[cols[selectedCol]] ; }
+						if ( row[cols[selectedCol]] < min ) { min = row[cols[selectedCol]] ; }
 						// get min and max values of latitude
 						if ( row["lat"] > maxlat ) { maxlat = row["lat"] ; }
 						if ( row["lat"] < minlat ) { minlat = row["lat"] ; }
@@ -154,21 +198,6 @@
 						if ( row["lon"] > maxlon ) { maxlon = row["lon"] ; }
 						if ( row["lon"] < minlon ) { minlon = row["lon"] ; }
 						
-/* 
-						var marker = new google.maps.Marker({
-																map: map,
-													            position: new google.maps.LatLng( row["lat"],row["lon"] ),
-																icon: {
-																		path: google.maps.SymbolPath.CIRCLE,
-																		scale: 1,
-																		strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-																		strokeWeight: 1,
-																		fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-																		fillOpacity: 0.5,
-    																},
-		  													});
-*/							
-
 						var tile = res/2;
 						var rectangle = new google.maps.Rectangle({
 															//strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
@@ -184,40 +213,12 @@
 																west:   row["lon"] - tile,
 															}
 								});
-/*
-						var circle = new google.maps.Circle({
-															map: map,
-															center: new google.maps.LatLng( row["lat"],row["lon"] ),
-															radius: 4000,
-															strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-															strokeWeight: 1,
-															fillColor:  'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-															fillOpacity: 0.8
-						});
-*/
-						google.maps.event.addListener(rectangle,"mouseout",function(){	
-							document.getElementById("log").innerHTML="scale";
-						});		
-						google.maps.event.addListener(rectangle,"mouseover",function(){
-							var coloratpoint = this.get('fillColor');
-							onItem = items.indexOf(this);
-							if ( onItem == null ) {return;}
-							var text =  "Value at <i>Lat</i>: " + "<b>" + lats[onItem] + "</b> , <i>Lon</i>: " +  "<b>" + lons[onItem] + "</b> = " + "<b>" + RR[onItem] + "</b>";
-							document.getElementById("log").innerHTML=text;
-						}); 
-						google.maps.event.addListener(rectangle,"click",function(){
-							if ( onItem == null ) {return;}
-							var place = new google.maps.LatLng( lats[onItem], lons[onItem]);
-							var infowindow = new google.maps.InfoWindow(); 
-							infowindow.setContent("Value: " + RR[onItem] + "<br/>Lat: "+ lats[onItem] + "<br/>Lon: " + lons[onItem]);
-							infowindow.setPosition(place);
-							infowindow.open(map);
-						}); 
+
 
 						items.push(rectangle);
-						RR.push(row[cols[0]]);
 						lats.push(row["lat"]);
 						lons.push(row["lon"]);
+						RR.push(row[cols[selectedCol]]);
 					}
 					updateItems();
 					updateScaleControl();
@@ -268,13 +269,13 @@
 			updateItems();
 		}; 
 		
-		function updateItems() {
+		function updateItems() {	
 			opacity = $("#slider-opacity").val();
 			var oldTile = res/2;	
 			res = $("#slider-res").val();
 			var tile = res/2;			
 			var north, south, east,west ; 
-
+			
 			for (var i = 0; i < items.length; i++) {
 				var color = getColor(RR[i]);
 				north = lats[i] + tile;
@@ -295,6 +296,28 @@
 										west:  west,
 									}
 					}) ;
+
+					google.maps.event.clearListeners(map, 'bounds_changed');
+
+					google.maps.event.addListener(items[i],"mouseout",function(){	
+						document.getElementById("log").innerHTML="scale";
+					});		
+					google.maps.event.addListener(items[i],"mouseover",function(){
+						var coloratpoint = this.get('fillColor');
+						var onItem = items.indexOf(this);
+						if ( onItem == null ) {return;}
+						var text =  "Value at <i>Lat</i>: " + "<b>" + lats[onItem] + "</b> , <i>Lon</i>: " +  "<b>" + lons[onItem] + "</b> = " + "<b>" + RR[onItem] + "</b>";
+						document.getElementById("log").innerHTML=text;
+					}); 
+					google.maps.event.addListener(items[i],"click",function(){
+						var onItem = items.indexOf(this);
+						if ( onItem == null ) {return;}
+						var place = new google.maps.LatLng( lats[onItem], lons[onItem]);
+						var infowindow = new google.maps.InfoWindow(); 
+						infowindow.setContent("Value: " + RR[onItem] + "<br/>Lat: "+ lats[onItem] + "<br/>Lon: " + lons[onItem]);
+						infowindow.setPosition(place);
+						infowindow.open(map);
+					}); 
         	}
 		};
 
@@ -328,8 +351,9 @@
 			$("#selectedMenu").change( function(){
 					var selected = $(this).val();	
 					if (selected == "Choose" ) {return;}
-					var file = "https://jonarbo.github.io/koeppen/Data/" + selected;
-					processFile(file,true)	;
+					thefile = "https://jonarbo.github.io/koeppen/Data/" + selected;
+					download = true;
+					processFile()	;
 				});
 						
 			$("#update").click(function() {
@@ -337,8 +361,13 @@
 					opacity=$("#slider-opacity").val();
 					setMaxScale( $("#scalemax").val() );
 					setMinScale( $("#scalemin").val() );
-       				selectedCol = $("#columns").val();
-					updateItems();	
+
+					if ( selectedCol != $("#columns").val() - 1 ){
+						selectedCol = $("#columns").val() - 1;
+						reReadFile();
+						$("#columns option[value='"+ selectedCol +"']").attr('selected', 'selected');
+					} 
+					updateItems();	 	
 				});
 
 			$("#advancedPanel").hide();
@@ -347,12 +376,6 @@
 		});
 
 		function initialize() {
-		  var mapOptions = {
-			zoom: 2,
-			minZoom: 1,
-			center: new google.maps.LatLng(0,0)
-			//center: new google.maps.LatLng(15.7,-90)
-		  };
 		  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 		}
 		// Code for dropbox
@@ -360,9 +383,9 @@
 			var options = {
 			// Required. Called when a user selects an item in the Chooser.
 			success: function(files) {
-			$.each(files, function(index, file) {
-			var file = "&lt;div class='attach'&gt;&lt;a target='_blank' href='" + file.link + "'&gt;" + file.name + "&lt;/a&gt;&lt;/div&gt;"
-			$('#attachments').append(file);
+			$.each(files, function(index, fileId) {
+			var filedb = "&lt;div class='attach'&gt;&lt;a target='_blank' href='" + fileId.link + "'&gt;" + fileId.name + "&lt;/a&gt;&lt;/div&gt;"
+			$('#attachments').append(db);
 			});
 			},
 			cancel: function() {
@@ -379,9 +402,8 @@
 			apiKey: 'Your Api Key Here',
 			clientId: 'Your Client Id here',
 			buttonEl: document.getElementById('googlepicker'),
-			onSelect: function(file) {
-			console.log(file);
-			alert('Selected ' + file.title);
+			onSelect: function(fileg) {
+			alert('Selected ' + fileg.title);
 			}
 			});
 			}
