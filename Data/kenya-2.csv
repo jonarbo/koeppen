@@ -1,4 +1,4 @@
-latitude;longitude;Frequecy;Risk
+lat;lon;Frequecy;Risk
 -3.6;36.35;0.375;0.75
 -3.6;36.4;0.375;0.75
 -3.6;36.45;0.5;1
