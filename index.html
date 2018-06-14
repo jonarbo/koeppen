@@ -168,7 +168,7 @@
 
 					// Get the columns name
 					//var options_str="";	
-					var options_str="<select class='ui-block-b' style='width:100%; height:30px' >"
+					var options_str='<select class="ui-block-b" style="width:100%" name="columns" id="columns">'
 					var valind = 1;	
 					for (cn in  results["data"][0]) {
 						if ( (cn !== "lat" && cn !== "lon") ){
@@ -183,8 +183,11 @@
 						}
 					}
 					options_str += "</select>"
-					document.getElementById("columns").innerHTML = options_str;
-					$("#columns").val(1).attr('selected', true).siblings('option').removeAttr('selected');  
+					document.getElementById("columnsDiv").innerHTML = options_str;
+
+					$("#columns").change(function() {
+						selectedCol = $(this).val() ;
+					});
 
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
@@ -354,7 +357,7 @@
 					if (selected == "Choose" ) {return;}
 					thefile = "https://jonarbo.github.io/koeppen/Data/" + selected;
 					download = true;
-					processFile()	;
+					processFile()	
 				});
 						
 			$("#update").click(function() {
@@ -362,11 +365,12 @@
 					opacity=$("#slider-opacity").val();
 					setMaxScale( $("#scalemax").val() );
 					setMinScale( $("#scalemin").val() );
-
+				
 					if ( selectedCol != $("#columns").val() - 1 ){
 						selectedCol = $("#columns").val() - 1;
+						console.log(selectedCol);
 						reReadFile();
-						$("#columns option[value='"+ selectedCol +"']").attr('selected', 'selected');
+						//$("#columns option[value='"+ selectedCol +"']").attr('selected', 'selected');
 					} 
 					updateItems();	 	
 				});
@@ -549,10 +553,11 @@
 					
 						<!-- COLUMNS -->
 						<div class="ui-block-b" style="width:90%">
-							<div id="select-cols" class="ui-bar ui-bar-a" style="height:70px">
+							<div id="select-cols" class="ui-bar ui-bar-a" style="height:60px">
 								Showing:
-										<div name="columns" id="columns" class="ui-bar ui-bar-a">
+										<div name="columnsDiv" id="columnsDiv" class="ui-bar ui-bar-a">
 										</div>
+									<!-- <select id="columns"></select> -->
 							</div>
 						</div>
 
