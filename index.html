@@ -328,6 +328,7 @@
 		// When the page is loaded
 		$(document).ready(function(){
 			$("#localfile").change(handleFile);	
+			
 			$("#csv-file").click( function(){
 					$("#localfile").click();
 				});
@@ -368,9 +369,7 @@
 				
 					if ( selectedCol != $("#columns").val() - 1 ){
 						selectedCol = $("#columns").val() - 1;
-						console.log(selectedCol);
 						reReadFile();
-						//$("#columns option[value='"+ selectedCol +"']").attr('selected', 'selected');
 					} 
 					updateItems();	 	
 				});
