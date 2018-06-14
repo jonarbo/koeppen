@@ -167,7 +167,8 @@
 					var maxlon=-180;
 
 					// Get the columns name
-					var options_str="";	
+					//var options_str="";	
+					var options_str="<select class='ui-block-b' style='width:100%; height:30px' >"
 					var valind = 1;	
 					for (cn in  results["data"][0]) {
 						if ( (cn !== "lat" && cn !== "lon") ){
@@ -184,7 +185,7 @@
 					options_str += "</select>"
 					document.getElementById("columns").innerHTML = options_str;
 					$("#columns").val(1).attr('selected', true).siblings('option').removeAttr('selected');  
-			
+
 					for(idx in results["data"]) {
 						var row = results["data"][idx];
 
@@ -548,11 +549,10 @@
 					
 						<!-- COLUMNS -->
 						<div class="ui-block-b" style="width:90%">
-							<div id="select-cols" class="ui-bar ui-bar-a" style="height:80px">
+							<div id="select-cols" class="ui-bar ui-bar-a" style="height:70px">
 								Showing:
-									    <select name="columns" id="columns">
-											<option value="1" selected="selected">Unknown yet</option>
-										</select>
+										<div name="columns" id="columns" class="ui-bar ui-bar-a">
+										</div>
 							</div>
 						</div>
 
