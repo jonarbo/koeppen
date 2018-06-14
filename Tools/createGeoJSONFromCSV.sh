@@ -90,12 +90,12 @@ do
 			if [ $i -eq 2 ]; then FinishProperty $filename.js; fi
 			if [ $i -eq 1 ]; then 
 				# Process headers
-				IFS=';' read -ra HEADERS <<< "$a"
+				IFS=',' read -ra HEADERS <<< "$a"
 				i=0
 				lastElemIndex=$((${#HEADERS[@]}-1))	
 			else
 			 	# process values "$f"
-				IFS=';' read -ra FIELDS <<< "$a"
+				IFS=',' read -ra FIELDS <<< "$a"
 				k=0
 				InitProperty $filename.js 
 				for f in "${FIELDS[@]}"; do

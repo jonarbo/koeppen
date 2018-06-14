@@ -62,6 +62,7 @@
 
 	  <script>
 		var map;
+		var zoom;
 		var RR = [];
 		var items =[];
 		var lats = [];
@@ -153,6 +154,13 @@
 			
 			delete(map);
 			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+			map.data.loadGeoJson('./cuba.json');
+
+			return;
+			map.addListener('zoom_changed', function() {
+				zoom = map.zoom;
+				console.log(zoom);
+			});	
 
 			var parseres = Papa.parse(thefile, {
 				download: download,
@@ -210,7 +218,10 @@
 					if (angle < 0) {
  						 angle += 360;
 					}
-					var zoom = Math.round(Math.log(256 * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+					zoom = Math.round(Math.log(256 * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+					var center = new google.maps.LatLng( (minlat+maxlat)/2, (minlon+maxlon)/2 );
+					map.panTo(center);
+					map.setZoom(zoom);
 
 					// todo cambiar la resolucion en funcion de valor de zoom 
 					for(idx in results["data"]) {
@@ -241,9 +252,6 @@
 					updateItems();
 					updateScaleControl();
 
-					var center = new google.maps.LatLng( (minlat+maxlat)/2, (minlon+maxlon)/2 );
-					map.panTo(center);
-					map.setZoom(zoom);	
 					console.log("All parsing done");	
 				}
 			});
