@@ -20,6 +20,7 @@
 	<script type="text/javascript" src="./js/Colour.js"></script>
 
 	<style>
+
 		#Header {
 			margin: 30px;
 		}
@@ -201,8 +202,21 @@
 						// get min and max values of long
 						if ( row["lon"] > maxlon ) { maxlon = row["lon"] ; }
 						if ( row["lon"] < minlon ) { minlon = row["lon"] ; }
-						
+					}
+					var GLOBE_WIDTH = 256; // a constant in Google's map projection
+					var west = minlon;
+					var east = maxlon;
+					var angle = east - west;
+					if (angle < 0) {
+ 						 angle += 360;
+					}
+					var zoom = Math.round(Math.log(256 * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+
+					// todo cambiar la resolucion en funcion de valor de zoom 
+					for(idx in results["data"]) {
+						var row = results["data"][idx];
 						var tile = res/2;
+						if (row[cols[selectedCol]] != 0) {
 						var rectangle = new google.maps.Rectangle({
 															//strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
 															strokeOpacity: opacity/100,
@@ -217,27 +231,18 @@
 																west:   row["lon"] - tile,
 															}
 								});
-
-
 						items.push(rectangle);
 						lats.push(row["lat"]);
 						lons.push(row["lon"]);
 						RR.push(row[cols[selectedCol]]);
+						}
 					}
+
 					updateItems();
 					updateScaleControl();
-					//var center = new google.maps.LatLng( maxlat, minlon);
+
 					var center = new google.maps.LatLng( (minlat+maxlat)/2, (minlon+maxlon)/2 );
-					
 					map.panTo(center);
-					var GLOBE_WIDTH = 256; // a constant in Google's map projection
-					var west = minlon;
-					var east = maxlon;
-					var angle = east - west;
-					if (angle < 0) {
- 						 angle += 360;
-					}
-					var zoom = Math.round(Math.log(256 * 360 / angle / GLOBE_WIDTH) / Math.LN2);
 					map.setZoom(zoom);	
 					console.log("All parsing done");	
 				}
@@ -328,7 +333,7 @@
 		// When the page is loaded
 		$(document).ready(function(){
 			$("#localfile").change(handleFile);	
-			
+
 			$("#csv-file").click( function(){
 					$("#localfile").click();
 				});
