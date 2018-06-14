@@ -50,8 +50,8 @@ function AddCoordinate() {
 	# 
 	cat <<EOF >>$1
                       "geometry": {
-                                        "type":"Point",
-					"coordinates":[$2,$3]
+                                        "type":"Polygon",
+					"coordinates":[ [ [$3-0.025,$2-0.025],[$3-0.025,$2+0.025],[$3+0.025,$2+0.025],[$3+0.025,$2-0.025],[$3-0.025,$2-0.025] ] ]
                                   }
 EOF
 }
