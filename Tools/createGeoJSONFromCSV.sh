@@ -96,6 +96,7 @@ function InitProperties() {
 	cat <<EOF >$1
 	{
 	  "properties": {
+		"columns":"$2"
 EOF
 }
 
@@ -114,6 +115,8 @@ function FinishProperty() {
                     },
 EOF
 }
+
+function join { local IFS="$1"; shift; echo "$*"; }
 
 i=1
 declare -a HEADERS
@@ -153,7 +156,8 @@ do
 				IFS=',' read -ra HEADERS <<< "$a"
 				i=0
 				lastElemIndex=$((${#HEADERS[@]}-1))	
-				InitProperties $filename.json
+				headers=$(join , ${HEADERS[@]})
+				InitProperties $filename.json $headers
 				for ((j=2; j<=$lastElemIndex; j++ ));
 				do
 					AddMaxMinValues  $filename.json ${HEADERS[$j]} $(($j-2))
