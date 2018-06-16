@@ -27,10 +27,10 @@ function FindMaxMinValue() {
 	done
 }
 
-function InitFile() {
-	cat <<EOF > $1
-        {"type" : "FeatureCollection" ,
-         "features":
+function InitFeatures() {
+	cat <<EOF >> $1
+        "type" : "FeatureCollection" ,
+        "features":
                  [
 EOF
 }
@@ -39,7 +39,7 @@ function FinishFile() {
 	cat <<EOF >> $1
                     }
                  ]
-        }
+		}
 EOF
 }
 
@@ -74,9 +74,9 @@ EOF
 }
 
 function AddMaxMinValues() {
-		cat <<EOF >>$1
-					"$2_max":${maxv[$3]},
-					"$2_min":${minv[$3]},
+	cat <<EOF >>$1
+		"$2_max":${maxv[$3]},
+		"$2_min":${minv[$3]},		
 EOF
 }
 
@@ -89,6 +89,23 @@ function AddCoordinate() {
                                         "type":"Polygon",
 					"coordinates":[ [ [ `bc <<< $2-0.025`,`bc <<< $3-0.025`],[`bc <<< $2+0.025`,`bc <<< $3-0.025`],[`bc <<< $2+0.025`,`bc <<< $3+0.025`],[`bc <<< $2-0.025`,`bc <<< $3+0.025`],[`bc <<< $2-0.025`,`bc <<< $3-0.025`] ] ]
                                   }
+EOF
+}
+
+function InitProperties() {
+	cat <<EOF >$1
+	{
+	  "properties": {
+EOF
+}
+
+function AddProperties() {
+	cat <<EOF >>$1
+		"maxlat":$maxlat,
+		"maxlon":$maxlon,
+		"minlat":$minlat,
+		"minlon":$minlon
+ 	  },
 EOF
 }
 
@@ -123,8 +140,6 @@ do
 		FindMaxMinLat $1
 		FindMaxMinLon $1
 
-		InitFile $filename.json
-	
 		#
 		# First be sure the text file doesnt have any DOS hidden char
 		#	
@@ -138,12 +153,18 @@ do
 				IFS=',' read -ra HEADERS <<< "$a"
 				i=0
 				lastElemIndex=$((${#HEADERS[@]}-1))	
+				InitProperties $filename.json
+				for ((j=2; j<=$lastElemIndex; j++ ));
+				do
+					AddMaxMinValues  $filename.json ${HEADERS[$j]} $(($j-2))
+				done
+				AddProperties $filename.json
+				InitFeatures $filename.json
 			else
 			 	# process values "$f"
 				IFS=',' read -ra FIELDS <<< "$a"
 				k=0
 				InitProperty $filename.json 
-				AddMaxMinCoords  $filename.json 
 				for f in "${FIELDS[@]}"; do
 					if [ "${HEADERS[$k]}" == "lon" ] ; then 
 						lon=$f
@@ -151,7 +172,6 @@ do
 						lat=$f
 					else
  						# Process fields
-						AddMaxMinValues  $filename.json ${HEADERS[$k]} $(($k-2))
 						if [ $k -eq $lastElemIndex ]; then 
 							AddLastProperty $filename.json ${HEADERS[$k]} $f
 						else 
