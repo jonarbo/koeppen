@@ -5,9 +5,30 @@ if [ $# == 0 ]; then
 	exit
 fi
 
+function FindMaxMinLat() {
+	maxlat=`cut -d ',' -f 2 $1 | sort -r | tail -n +2 | head -n1`
+	minlat=`cut -d ',' -f 2 $1 | sort -r | tail -n +2 | tail -n1`	
+}
+
+function FindMaxMinLon() {
+	maxlon=`cut -d ',' -f 1 $1 | sort -r | tail -n +2 | head -n1`
+	minlon=`cut -d ',' -f 1 $1 | sort -r | tail -n +2 | tail -n1`	
+}
+
+function FindMaxMinValue() {
+	incol=3
+	f=`cut -d ',' -f $incol $1 | head -n 1` 
+	while [ ! -z "$f" ];
+	do
+	    maxv+=(`cut -d ',' -f $incol $1 | sort -r | tail -n +2 | head -n1`)
+		minv+=(`cut -d ',' -f $incol $1 | sort -r | tail -n +2 | tail -n1`)
+		incol=$(($incol+1))
+		f=`cut -d ',' -f $incol $1 | head -n 1` 
+	done
+}
+
 function InitFile() {
 	cat <<EOF > $1
-eqfeed_callback (
         {"type" : "FeatureCollection" ,
          "features":
                  [
@@ -19,7 +40,6 @@ function FinishFile() {
                     }
                  ]
         }
-);
 EOF
 }
 
@@ -40,7 +60,23 @@ EOF
 function AddLastProperty() {
 	cat <<EOF >>$1
 					"$2":$3
-                                    },
+              		},
+EOF
+}
+
+function AddMaxMinCoords() {
+			cat <<EOF >>$1
+					"maxlat":$maxlat,
+					"maxlon":$maxlon,
+					"minlat":$minlat,
+					"minlon":$minlon,
+EOF
+}
+
+function AddMaxMinValues() {
+		cat <<EOF >>$1
+					"$2_max":${maxv[$3]},
+					"$2_min":${minv[$3]},
 EOF
 }
 
@@ -67,6 +103,10 @@ declare -a HEADERS
 declare lon
 declare lat
 declare lastElemIndex
+declare -a maxv
+declare -a minv
+declare minlat
+declare maxlat
 
 while [ ! -z $1 ] ;
 do
@@ -75,10 +115,15 @@ do
 	#
 	filename=$(basename -- "$1")
 	filename="${filename%.*}"
-	if [ -f "$filename.js" ]; then 
-		echo "File '$filename.js' already exists ... skipping"; 
+	if [ -f "$filename.json" ]; then 
+		echo "File '$filename.json' already exists ... skipping"; 
 	else
-		InitFile $filename.js
+
+		FindMaxMinValue $1
+		FindMaxMinLat $1
+		FindMaxMinLon $1
+
+		InitFile $filename.json
 	
 		#
 		# First be sure the text file doesnt have any DOS hidden char
@@ -87,7 +132,7 @@ do
 
 		cat $1 | while read a;
 		do
-			if [ $i -eq 2 ]; then FinishProperty $filename.js; fi
+			if [ $i -eq 2 ]; then FinishProperty $filename.json; fi
 			if [ $i -eq 1 ]; then 
 				# Process headers
 				IFS=',' read -ra HEADERS <<< "$a"
@@ -97,7 +142,8 @@ do
 			 	# process values "$f"
 				IFS=',' read -ra FIELDS <<< "$a"
 				k=0
-				InitProperty $filename.js 
+				InitProperty $filename.json 
+				AddMaxMinCoords  $filename.json 
 				for f in "${FIELDS[@]}"; do
 					if [ "${HEADERS[$k]}" == "lon" ] ; then 
 						lon=$f
@@ -105,21 +151,22 @@ do
 						lat=$f
 					else
  						# Process fields
+						AddMaxMinValues  $filename.json ${HEADERS[$k]} $(($k-2))
 						if [ $k -eq $lastElemIndex ]; then 
-							AddLastProperty $filename.js ${HEADERS[$k]} $f
+							AddLastProperty $filename.json ${HEADERS[$k]} $f
 						else 
-							AddProperty $filename.js ${HEADERS[$k]} $f
+							AddProperty $filename.json ${HEADERS[$k]} $f
 						fi
 					fi 					
 					k=$(($k+1))	
 				done
 				# Add coordinates here
-				AddCoordinate $filename.js $lon $lat	
+				AddCoordinate $filename.json $lon $lat	
 				i=2
 			fi
 		done
 	fi
-	FinishFile $filename.js   	
+	FinishFile $filename.json   	
 	shift
 done
 
