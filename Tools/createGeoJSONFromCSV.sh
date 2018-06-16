@@ -6,13 +6,13 @@ if [ $# == 0 ]; then
 fi
 
 function FindMaxMinLat() {
-	maxlat=`cut -d ',' -f 2 $1 | sort -r | tail -n +2 | head -n1`
-	minlat=`cut -d ',' -f 2 $1 | sort -r | tail -n +2 | tail -n1`	
+	maxlat=`cut -d ',' -f 2 $1 | tail -n +2 | sort -n -r | head -n1`
+	minlat=`cut -d ',' -f 2 $1 | tail -n +2 | sort -n -r | tail -n1`	
 }
 
 function FindMaxMinLon() {
-	maxlon=`cut -d ',' -f 1 $1 | sort -r | tail -n +2 | head -n1`
-	minlon=`cut -d ',' -f 1 $1 | sort -r | tail -n +2 | tail -n1`	
+	maxlon=`cut -d ',' -f 1 $1 | tail -n +2 | sort -n -r | head -n1`
+	minlon=`cut -d ',' -f 1 $1 | tail -n +2 | sort -n -r | tail -n1`	
 }
 
 function FindMaxMinValue() {
@@ -20,8 +20,8 @@ function FindMaxMinValue() {
 	f=`cut -d ',' -f $incol $1 | head -n 1` 
 	while [ ! -z "$f" ];
 	do
-	    maxv+=(`cut -d ',' -f $incol $1 | sort -r | tail -n +2 | head -n1`)
-		minv+=(`cut -d ',' -f $incol $1 | sort -r | tail -n +2 | tail -n1`)
+	    maxv+=(`cut -d ',' -f $incol $1 | tail -n +2 | sort -n -r | head -n1`)
+		minv+=(`cut -d ',' -f $incol $1 | tail -n +2 | sort -n -r | tail -n1`)
 		incol=$(($incol+1))
 		f=`cut -d ',' -f $incol $1 | head -n 1` 
 	done
