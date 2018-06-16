@@ -96,7 +96,7 @@ function InitProperties() {
 	cat <<EOF >$1
 	{
 	  "properties": {
-		"columns":"$2"
+		"columns":"$2",
 EOF
 }
 

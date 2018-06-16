@@ -1,6 +1,6 @@
 	{
 	  "properties": {
-		"columns":"lon,lat,frequency,risk"
+		"columns":"lon,lat,frequency,risk",
 		"frequency_max":1.00,
 		"frequency_min":0.00,		
 		"risk_max":2.25,
