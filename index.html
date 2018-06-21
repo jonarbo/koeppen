@@ -17,7 +17,7 @@
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>    
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 -->
-    
+
   <style type="text/css">
         #mapPage, #map {
             height: 100%;
@@ -118,7 +118,10 @@
     }
 
     function loadGeoJSON(){
-        layer.clearLayers();
+        console.log( $("#keep:checked").val())
+        if ( $("#keep:checked").val() == "keep" ) {
+            layer.clearLayers();
+        }
         $("#overlay").show();
         $.getJSON( thefile, function(data){
                     mydata = data
@@ -234,13 +237,14 @@
         L.Control.scale = L.Control.extend({
             onAdd: function(map) {
                 var div = L.DomUtil.create('div');
-                div.style.width="300px"
+                div.style.width="250px"
                 div.style.background="black" 
                 div.style.color="gray"
-                div.style.padding="5px" 
-                div.innerHTML  = '<div  id="log-min" style="text-align: left;float:left">0</div>'
-                div.innerHTML += '<div  id="log-max" style="text-align: right">1</div>'
+                div.style.padding="5px"
+                div.innerHTML = '<div><input type="checkbox" id="keep" checked="true" value="keep">Delete layer on new load</div>'
                 div.innerHTML += '<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)"></div>'
+                div.innerHTML += '<div  id="log-min" style="text-align: left;float:left">0</div>'
+                div.innerHTML += '<div  id="log-max" style="text-align: right; ">1</div>'
                 div.innerHTML += '<div  id="log-color" style="text-align: center"></div>'
                 return div;
             },
