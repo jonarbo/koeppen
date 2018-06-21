@@ -96,9 +96,7 @@
 			document.getElementById("log-max").innerHTML=max;   
         } else {
             delta =  document.getElementById("log-max").innerHTML - document.getElementById("log-min").innerHTML ;
-            console.log(delta)
         }
-        console.log(columns[selectedCol+2])
         layer.clearLayers();
         L.geoJSON(mydata, {
                 style: function(feature){
@@ -162,9 +160,6 @@
                     document.getElementById("log-min").innerHTML=min;
 			        document.getElementById("log-max").innerHTML=max;
                     $("#overlay").hide($("#log").innedHTML);
-
-                    console.log(document.getElementById("log-min").innerHTML)
-                    console.log(document.getElementById("log-max").innerHTML)
 
                     map.fitBounds( L.latLngBounds( L.latLng(minlat,minlon),L.latLng(maxlat,maxlon)));
         });
