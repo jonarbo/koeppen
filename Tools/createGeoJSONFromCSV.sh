@@ -172,8 +172,10 @@ do
 				for f in "${FIELDS[@]}"; do
 					if [ "${HEADERS[$k]}" == "lon" ] ; then 
 						lon=$f
+						AddProperty $filename.json "lon" $lon
 					elif [ "${HEADERS[$k]}" == "lat" ] ; then	
 						lat=$f
+						AddProperty $filename.json "lat" $lat
 					else
  						# Process fields
 						if [ $k -eq $lastElemIndex ]; then 
