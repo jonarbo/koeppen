@@ -1,31 +1,31 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" href="./jquery/demos/css/themes/default/jquery.mobile-1.4.5.min.css">
-	<script src="./jquery/demos/js/jquery.js"></script>
-	<script src="./jquery/demos/js/jquery.mobile-1.4.5.min.js"></script>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+ 
+     <link  rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+            integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+            crossorigin=""/>
+    <script   src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+            integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+            crossorigin=""></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>    
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 
-	<script src="./js/papaparse.min.js"></script>
-	<script	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpShV7rlMoA4M7-3l1mi9XLYMsLJo8ZpA&v=3.exp&libraries=visualization"></script>
+    
+  <style type="text/css">
+        #mapPage, #map {
+            height: 100%;
+        }
+        
+       #title {
+            color: #336600;
+        }
 
-	<!-- Dropbox api -->
-	<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="j816zdgbhryyqbg"></script>
-
-	<!-- Google api -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="https://www.google.com/jsapi?key=AIzaSyBpShV7rlMoA4M7-3l1mi9XLYMsLJo8ZpA"></script>
-	<script src="https://apis.google.com/js/client.js?onload=initPicker"></script>
-
-	<!-- color -->
-	<script type="text/javascript" src="./js/Colour.js"></script>
-
-	<style>
-
-		#Header {
-			margin: 30px;
-		}
-
-		#Footer p {
+		#footer p {
 			color: whitesmoke; 
 			background-color:#336600; 
 			padding:7px; 
@@ -33,562 +33,303 @@
 			margin-top:0px; 
 			font-size: 10px;
 		}
-		
-		#MainMenu {
-			margin-left:10px;
+
+        #map-content{
+            height: 100%;
+        }
+   
+        #overlay {
+            background: #ffffff;
+            color: #666666;
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            z-index: 5000;
+            top: 0;
+            left: 0;
+            float: left;
+            text-align: center;
+            padding-top: 25%;
+            opacity: 0.5;
+            filter: alpha(opacity=50); /* For IE8 and earlier */
+        } 
+
+        #advancedPanel {
+			width: 100%; 
+            margin: 15px;
+            float:left;
 		}
+  </style>
 
-		#map-canvas {
-			padding:20%;
-			margin-top: 25px;
-		}
+  <script type='text/javascript'>
+    //<![CDATA[
+    var map;
+    var popup;
+    var thefile;
+    var layer;
+    var mydata;
 
-		#advancedPanel,#UrlMenu {
-			width: 109%; 
-			height: 370px;
-			margin: 10px;
-			align-content: center;	
-		}
+    function getColor(magnitude,delta) {
+        //var high = [5, 69, 54];  // color of smallest datum
+        var high = [0, 100, 50];  // color of smallest datum
+        //var low = [151, 83, 34];   // color of largest datum
+        var low = [120, 100, 50];   // color of largest datum
 
-		.ui-icon-dropbox:after {
-			background-image: url("./img/Dropbox.png");
-			background-size: 18px 18px;
-		}
-		.ui-icon-gdrive:after {
-			background-image: url("./img/Gdrive.png");
-			background-size: 18px 18px;
-		}
-	  </style>
+        // delta represents where the value sits between the min and max
+        var delta = magnitude / delta;
+        
+        var color = [];
+        for (var i = 0; i < 3; i++) {
+            // calculate an integer color based on the delta
+            color[i] = (high[i] - low[i]) * delta + low[i];
+        }
+        return color;	
+    }
 
-	  <script>
-		var map;
-		var zoom;
-		var RR = [];
-		var items =[];
-		var lats = [];
-		var lons = [];
-		var max= 0;
-		var min = 0;
-		var opacity=50;
-		var res=0.05;
-		var cols = [];
-		var selectedCol = 0;
-		var thefile ;
-		var download = false;
-		var mapOptions = {
-			zoom: 2,
-			minZoom: 1,
-			center: new google.maps.LatLng(0,0)
-		};
+    function updateItems(){
+        opacity = $("#slider-opacity").val();
+		var delta
+        if ( selectedCol != $("#columns").val() - 1 ){
+            // chage data
+            selectedCol = $("#columns").val() - 1;
+            max = mydata.properties[columns[selectedCol+2]+"_max"];
+            min = mydata.properties[columns[selectedCol+2]+"_min"];                    
+            columns=mydata.properties.columns.split(',');
+            delta = max - min 
+            // update scale controls
+            document.getElementById("log-min").innerHTML=min;
+			document.getElementById("log-max").innerHTML=max;   
+        } else {
+            delta =  document.getElementById("log-max").innerHTML - document.getElementById("log-min").innerHTML ;
+            console.log(delta)
+        }
+        console.log(columns[selectedCol+2])
+        layer.clearLayers();
+        L.geoJSON(mydata, {
+                style: function(feature){
+                    var color = getColor( feature.properties[ columns[selectedCol+2] ],delta );
+                    return {
+                        color: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+                        opacity: opacity/100
+                    };
+                },
+                onEachFeature: onEachFeature
+        }).addTo(layer);
+    }
 
-	 	// http://stackoverflow.com/a/2901298/562440
-		function numberWithCommas(x) {
-			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-		}
+    function loadGeoJSON(){
+        layer.clearLayers();
+        $("#overlay").show();
+        $.getJSON( thefile, function(data){
+                    mydata = data
 
-		function getColor(magnitude) {
-			//var high = [5, 69, 54];  // color of smallest datum
-			var high = [0, 100, 50];  // color of smallest datum
-			//var low = [151, 83, 34];   // color of largest datum
-			var low = [120, 100, 50];   // color of largest datum
+                    opacity = $("#slider-opacity").val();
+			        selectedCol = 0;
 
-			// delta represents where the value sits between the min and max
-			var delta = magnitude / (max-min);
-			
-			var color = [];
-			for (var i = 0; i < 3; i++) {
-				// calculate an integer color based on the delta
-				color[i] = (high[i] - low[i]) * delta + low[i];
-			}
-			return color;	
-		}
+                    maxlat=data.properties.maxlat;
+                    minlat=data.properties.minlat;
+                    maxlon=data.properties.maxlon;
+                    minlon=data.properties.minlon;
+                    columns=data.properties.columns.split(',');
 
-		function handleFile(datafile) {
-			thefile = document.getElementById("localfile").files[0];
-			download = false;
-			processFile()	;
-		};
+                    max = data.properties[columns[selectedCol+2]+"_max"];
+                    min = data.properties[columns[selectedCol+2]+"_min"];                    
 
-		function reReadFile() {
-			opacity = $("#slider-opacity").val();
-			res = $("#slider-res").val();
-			RR=[];
-			max= 0;
-			min = 0;
+                    L.geoJSON(data, {
+                        style: function(feature){
+                            var color = getColor( feature.properties[ columns[selectedCol+2] ],max-min );
+                            return {
+                                color: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
+                                ppacity: opacity/100
+                            };
+                        },
+                        onEachFeature: onEachFeature
+                    }).addTo(layer);
 
-			var parseres = Papa.parse(thefile, {
-				download: download,
-				header: true,
-//				worker: true,
-				dynamicTyping: true,
-				withCredentials: true,
-				complete: function(results) {
-					RR = [];
-					for(idx in results["data"]) {
-						var row = results["data"][idx];
+                    var GLOBE_WIDTH = 256; // a constant in Google's map projection
+                    var west = minlon;
+                    var east = maxlon;
+                    var angle = east - west;
+                    if (angle < 0) {
+                        angle += 360;
+                    }
+                    
+                     // Display the columns name
+			    	var options_str='<select class="ui-block-b" style="width:100%" name="columns" id="columns">'	
+			    	options_str += '<option selected="selected" value="' + 1 + '">' + columns[selectedCol+2] + '</option>';
+			    	for (valind=3 ; valind < columns.length ; valind++ ) {
+						options_str += '<option value="' + (valind-1) + '">' + columns[valind] + '</option>';
+			    	}
+		    		options_str += "</select>"
+	    			document.getElementById("columnsDiv").innerHTML = options_str;
 
-						// get min and max values of the scale 
-						if ( row[cols[selectedCol]] > max ) { max = row[cols[selectedCol]] ; }
-						if ( row[cols[selectedCol]] < min ) { min = row[cols[selectedCol]] ; }
-						
-						RR.push(row[cols[selectedCol]]);
-					}
-					updateItems();
-					updateScaleControl();	
-					console.log("All parsing done .. file reRead");	
-				}
-			});
-		};
+                    // update scale controls
+                    document.getElementById("log-min").innerHTML=min;
+			        document.getElementById("log-max").innerHTML=max;
+                    $("#overlay").hide($("#log").innedHTML);
 
-		function processFile()	{
-			opacity = $("#slider-opacity").val();
-			res = $("#slider-res").val();
-			items=[];
-			RR=[];
-			lats=[];
-			lons=[];
-			cols=[];
-			max= 0;
-			min = 0;
-			selectedCol = 0;
-			
-			delete(map);
-			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-			map.data.loadGeoJson('https://jonarbo.github.io/koeppen/Data/cuba.json');
+                    console.log(document.getElementById("log-min").innerHTML)
+                    console.log(document.getElementById("log-max").innerHTML)
 
-			return;
-			map.addListener('zoom_changed', function() {
-				zoom = map.zoom;
-				console.log(zoom);
-			});	
+                    map.fitBounds( L.latLngBounds( L.latLng(minlat,minlon),L.latLng(maxlat,maxlon)));
+        });
+     }
 
-			var parseres = Papa.parse(thefile, {
-				download: download,
-				header: true,
-//				worker: true,
-				dynamicTyping: true,
-				withCredentials: true,
-				complete: function(results) {
-					RR = [];
-					var minlat=90;
-					var maxlat=-90;
-					var minlon=180;
-					var maxlon=-180;
+    function onEachFeature(feature,layer) {
+        layer.bindPopup("Lat: " + feature.properties.lat  + "<br/>Lng: " + feature.properties.lon + "<br>Value: " + feature.properties[ mydata.properties.columns.split(',')[selectedCol+2] ] );
+        layer.on('mouseover', function(){
+            var RR  = feature.properties[ columns[selectedCol+2]];
+            var lat = feature.properties["lat"];
+			var lon = feature.properties["lon"];
+			var text =  "( lat ; lng ) = ( "+ lat + " ; " + lon + " ) = " + RR ;
+            document.getElementById("log-color").innerHTML=text;
+        });
+        layer.on('mouseout', function (){
+            var text =  "" ;
+            document.getElementById("log-color").innerHTML=text;
+        });
+     }
 
-					// Get the columns name
-					//var options_str="";	
-					var options_str='<select class="ui-block-b" style="width:100%" name="columns" id="columns">'
-					var valind = 1;	
-					for (cn in  results["data"][0]) {
-						if ( (cn !== "lat" && cn !== "lon") ){
-							cols.push(cn);
-							//Create and append the options
-							if ( valind == 1) {
-								options_str += '<option selected="selected" value="' + valind + '">' + cn + '</option>';
-							} else {
-								options_str += '<option value="' + valind + '">' + cn + '</option>';
-							}
-							valind = valind + 1;
-						}
-					}
-					options_str += "</select>"
-					document.getElementById("columnsDiv").innerHTML = options_str;
+    $(window).load(function(){
+        
+        var element = $('#mapPage');
+        element.height(element.height() - 42);
 
-					$("#columns").change(function() {
-						selectedCol = $(this).val() ;
-					});
+        // Create the map        
+        map = L.map('map').setView([0, 0], 3);
+        popup = L.popup();
+        layer = L.geoJSON().addTo(map);
 
-					for(idx in results["data"]) {
-						var row = results["data"][idx];
+        // add an OpenStreetMap tile layer
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                                '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                                'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                            id: 'mapbox.streets'
+        }).addTo(map);
 
-						// get min and max values of the scale 
-						if ( row[cols[selectedCol]] > max ) { max = row[cols[selectedCol]] ; }
-						if ( row[cols[selectedCol]] < min ) { min = row[cols[selectedCol]] ; }
-						// get min and max values of latitude
-						if ( row["lat"] > maxlat ) { maxlat = row["lat"] ; }
-						if ( row["lat"] < minlat ) { minlat = row["lat"] ; }
-						// get min and max values of long
-						if ( row["lon"] > maxlon ) { maxlon = row["lon"] ; }
-						if ( row["lon"] < minlon ) { minlon = row["lon"] ; }
-					}
-					var GLOBE_WIDTH = 256; // a constant in Google's map projection
-					var west = minlon;
-					var east = maxlon;
-					var angle = east - west;
-					if (angle < 0) {
- 						 angle += 360;
-					}
-					zoom = Math.round(Math.log(256 * 360 / angle / GLOBE_WIDTH) / Math.LN2);
-					var center = new google.maps.LatLng( (minlat+maxlat)/2, (minlon+maxlon)/2 );
-					map.panTo(center);
-					map.setZoom(zoom);
+        //* Connect events here *//
+        $("#options").click(function(){
+            if ( $('#advancedPanel').is(":visible") ){ 
+                $('#advancedPanel').hide();
+            } else {
+                    $('#advancedPanel').show();
+            }
+        });
 
-					// todo cambiar la resolucion en funcion de valor de zoom 
-					for(idx in results["data"]) {
-						var row = results["data"][idx];
-						var tile = res/2;
-						if (row[cols[selectedCol]] != 0) {
-						var rectangle = new google.maps.Rectangle({
-															//strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-															strokeOpacity: opacity/100,
-															strokeWeight: 2,
-															//fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-															fillOpacity: opacity/100,
-															map: map,
-															bounds: {
-																north:  row["lat"] + tile,
-																south:  row["lat"] - tile,
-																east:   row["lon"] + tile,
-																west:   row["lon"] - tile,
-															}
-								});
-						items.push(rectangle);
-						lats.push(row["lat"]);
-						lons.push(row["lon"]);
-						RR.push(row[cols[selectedCol]]);
-						}
-					}
+        $("#selectedMenu").change( function(){
+                delete(map);
+                var selected = $(this).val();	
+                if (selected == "Choose" ) {return;}
+                thefile = "https://jonarbo.github.io/koeppen/Data/" + selected;
+                loadGeoJSON()
+        });
+        
+        $("#update").click(function() {
+                updateItems();	 	
+        });
 
-					updateItems();
-					updateScaleControl();
+        // Some initial states
+        $('#advancedPanel').hide();
+        $("#overlay").hide();
 
-					console.log("All parsing done");	
-				}
-			});
-		};
-		
-		function updateScaleControl() {
-			$("#scalemin").val(min);
-			$("#scalemax").val(max);
-		};
+        // creaate legend
+        L.Control.scale = L.Control.extend({
+            onAdd: function(map) {
+                var div = L.DomUtil.create('div');
+                div.style.width="300px"
+                div.style.background="black" 
+                div.style.color="gray"
+                div.style.padding="5px" 
+                div.innerHTML  = '<div  id="log-min" style="text-align: left;float:left">0</div>'
+                div.innerHTML += '<div  id="log-max" style="text-align: right">1</div>'
+                div.innerHTML += '<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)"></div>'
+                div.innerHTML += '<div  id="log-color" style="text-align: center"></div>'
+                return div;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+        L.control.scale = function(opts) {
+            return new L.Control.scale(opts);
+        }
+        // add legend
+        L.control.scale({ position: 'topright' }).addTo(map);
 
-		function clearMap(){
-			hideItems();
-			items=[];
-			RR=[];
-			lats=[];
-			lons=[];
-		};
+    });
+    //]]> 
 
-		function hideItems() {
-			for (var i = 0; i < items.length; i++) {
-        		items[i].setMap(null);
-        	}	
-		};
+    </script>
 
-		function setMaxScale (value) {
-			max = value;	
-			updateItems();	
-		}; 
+  
+</head>
 
-		function setMinScale (value) {
-			min = value;
-			updateItems();
-		}; 
-		
-		function updateItems() {	
-			opacity = $("#slider-opacity").val();
-			var oldTile = res/2;	
-			res = $("#slider-res").val();
-			var tile = res/2;			
-			var north, south, east,west ; 
-			
-			for (var i = 0; i < items.length; i++) {
-				var color = getColor(RR[i]);
-				north = lats[i] + tile;
-				south = lats[i] - tile;
-				east  = lons[i] + tile,
-				west  = lons[i] - tile,
-
-        		items[i].setOptions({ 
-								strokeColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-								strokeOpacity: opacity/100,
-								strokeWeight: 2,
-								fillColor: 'hsl(' + color[0] + ',' + color[1] + '%,' + color[2] + '%)' ,
-								fillOpacity: opacity/100,
-								bounds: {
-										north: north,
-										south: south,
-										east:  east,
-										west:  west,
-									}
-					}) ;
-
-					google.maps.event.clearListeners(map, 'bounds_changed');
-
-					google.maps.event.addListener(items[i],"mouseout",function(){	
-						document.getElementById("log").innerHTML="scale";
-					});		
-					google.maps.event.addListener(items[i],"mouseover",function(){
-						var coloratpoint = this.get('fillColor');
-						var onItem = items.indexOf(this);
-						if ( onItem == null ) {return;}
-						var text =  "Value at <i>Lat</i>: " + "<b>" + lats[onItem] + "</b> , <i>Lon</i>: " +  "<b>" + lons[onItem] + "</b> = " + "<b>" + RR[onItem] + "</b>";
-						document.getElementById("log").innerHTML=text;
-					}); 
-					google.maps.event.addListener(items[i],"click",function(){
-						var onItem = items.indexOf(this);
-						if ( onItem == null ) {return;}
-						var place = new google.maps.LatLng( lats[onItem], lons[onItem]);
-						var infowindow = new google.maps.InfoWindow(); 
-						infowindow.setContent("Value: " + RR[onItem] + "<br/>Lat: "+ lats[onItem] + "<br/>Lon: " + lons[onItem]);
-						infowindow.setPosition(place);
-						infowindow.open(map);
-					}); 
-        	}
-		};
-
-		// When the page is loaded
-		$(document).ready(function(){
-			$("#localfile").change(handleFile);	
-
-			$("#csv-file").click( function(){
-					$("#localfile").click();
-				});
-				
-			$("#options").click(function(){
-					if ( $('#advancedPanel').is(":visible") ){ 
-						$('#advancedPanel').hide();
-					} else {
-							$('#advancedPanel').show();
-					}
-				});
-
-			$("#UrlGDrive").click( function(){
-					initPicker();
-				});
-
-			$("#UrlDropbox").click( function(){
-					noteAttachdb();
-				});
-
-			$("#clear").click(function() {
-					clearMap()
-				});
-
-			$("#selectedMenu").change( function(){
-					var selected = $(this).val();	
-					if (selected == "Choose" ) {return;}
-					thefile = "https://jonarbo.github.io/koeppen/Data/" + selected;
-					download = true;
-					processFile()	
-				});
-						
-			$("#update").click(function() {
-					res = $("#slider-res").val();
-					opacity=$("#slider-opacity").val();
-					setMaxScale( $("#scalemax").val() );
-					setMinScale( $("#scalemin").val() );
-				
-					if ( selectedCol != $("#columns").val() - 1 ){
-						selectedCol = $("#columns").val() - 1;
-						reReadFile();
-					} 
-					updateItems();	 	
-				});
-
-			$("#advancedPanel").hide();
-			$("#UrlMenu").hide();
-			google.maps.event.addDomListener(window, 'load', initialize);
-		});
-
-		function initialize() {
-		  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-		}
-		// Code for dropbox
-		function noteAttachdb() {
-			var options = {
-			// Required. Called when a user selects an item in the Chooser.
-			success: function(files) {
-			$.each(files, function(index, fileId) {
-			var filedb = "&lt;div class='attach'&gt;&lt;a target='_blank' href='" + fileId.link + "'&gt;" + fileId.name + "&lt;/a&gt;&lt;/div&gt;"
-			$('#attachments').append(db);
-			});
-			},
-			cancel: function() {
-			},
-			linkType: "preview", // or "direct"
-			multiselect: true, // or true
-			};
-			Dropbox.choose(options);
-		}
-
-		// Code for GDrive
-		function initPicker() {
-			var picker = new FilePicker({
-			apiKey: 'Your Api Key Here',
-			clientId: 'Your Client Id here',
-			buttonEl: document.getElementById('googlepicker'),
-			onSelect: function(fileg) {
-			alert('Selected ' + fileg.title);
-			}
-			});
-			}
-			(function() {
-			var FilePicker = window.FilePicker = function(options) {
-			this.apiKey = options.apiKey;
-			this.clientId = options.clientId;
-			this.buttonEl = options.buttonEl;
-			this.onSelect = options.onSelect;
-			this.buttonEl.addEventListener('click', this.open.bind(this));
-			this.buttonEl.disabled = true;
-			gapi.client.setApiKey(this.apiKey);
-			gapi.client.load('drive', 'v2', this._driveApiLoaded.bind(this));
-			google.load('picker', '1', {
-			callback: this._pickerApiLoaded.bind(this)
-			});
-			}
-			FilePicker.prototype = {
-			open: function() {
-			var token = gapi.auth.getToken();
-			if (token) {
-			this._showPicker();
-			} else {
-			this._doAuth(false, function() {
-			this._showPicker();
-			}.bind(this));
-			}
-			},
-			_showPicker: function() {
-			var accessToken = gapi.auth.getToken().access_token;
-			this.picker = new google.picker.PickerBuilder().
-			addView(google.picker.ViewId.DOCUMENTS).
-			setAppId(this.clientId).
-			setOAuthToken(accessToken).
-			setCallback(this._pickerCallback.bind(this)).
-			build().
-			setVisible(true);
-			},
-			_pickerCallback: function(data) {
-			if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
-			var file = data[google.picker.Response.DOCUMENTS][0],
-			id = file[google.picker.Document.ID],
-			request = gapi.client.drive.files.get({
-			fileId: id
-			});
-			request.execute(this._fileGetCallback.bind(this));
-			}
-			},
-			_fileGetCallback: function(file) {
-			if (this.onSelect) {
-			this.onSelect(file);
-			}
-			},
-			_pickerApiLoaded: function() {
-			this.buttonEl.disabled = false;
-			},
-			_driveApiLoaded: function() {
-			this._doAuth(true);
-			},
-			_doAuth: function(immediate, callback) {
-			gapi.auth.authorize({
-			client_id: this.clientId + '.apps.googleusercontent.com',
-			scope: 'https://www.googleapis.com/auth/drive.readonly',
-			immediate: immediate
-			}, callback);
-			}
-			};
-			}());
-
-	  </script>
-	</head>
 <body>
-		<!-- Header -->
-		<div id="Header">
-			<img src='./img/CCBLogo-transparent.png' alt="Consortium for Capacity Building">
-			<h1 >Modified KOEPPEN for ENOS</h1>
-		</div>
+      <body>
+		<div data-role="page" id="mapPage" > 
 
-		<!-- Main -->
-		<input type="file" id="localfile" style="display:none">
-		<div id="MainMenu" data-role="controlgroup" data-type="horizontal">
-				    <button id="csv-file" data-icon="action">Load File</button>
-				    <button id="UrlGDrive"  class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-gdrive">GDrive</button>
-					<button id="UrlDropbox" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-dropbox">Dropbox</button>	
-					<!-- <button id="clear"   data-icon="recycle">Clear</button> -->
-			    	<select  data-icon="bullets" name="select-native" id="selectedMenu">
-					        <option value="Choose" >Our Data</option>
-					        <optgroup label="South America"  >
-					            <option value="guatemala.csv">Guatemala</option>
-					            <option value="cuba.csv">Cuba</option>
-					        </optgroup>
-							 <optgroup label="Africa"  >
-						            <option value="kenya.csv">Kenya</option>
-					        </optgroup>
-					        </optgroup>
-							 <optgroup label="Asia"  >
-						            <option value="indonesia.csv">Indonesia</option>
-					        </optgroup>
-					    </select>
-			 	<button id="options" data-icon="gear">Options</button>
-		</div>
-		
+            <div data-role="footer">
+                    <img style="margin:10px" src='./img/CCBLogo-transparent.png' alt="Consortium for Capacity Building"> 
+                    <div class="ui-bar">
+                        <p  id="title" >Modified KOEPPEN for ENOS</p>  
+                        <select name="selectedMenu" id="selectedMenu" data-mini="true" data-inline="true">
+                                <option value="Choose" >Select Data</option>
+                                <optgroup label="South America"  >
+                                    <option value="guatemala.json">Guatemala</option>
+                                    <option value="cuba.json">Cuba</option>
+                                </optgroup>
+                                 <optgroup label="Africa"  >
+                                        <option value="kenya.json">Kenya</option>
+                                </optgroup>
+                                </optgroup>
+                                 <optgroup label="Asia"  >
+                                        <option value="indonesia.json">Indonesia</option>
+                                </optgroup>
+                        </select>
+                        <a href="#" id="options"  class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-right ui-btn-icon-right ui-icon-gear">Options</a>
+                        
+                        <!-- Menu for Advanced Options -->
+		                <div id="advancedPanel">
+                          
+                            <!-- OPACITY -->
+                          <div class="ui-bar ui-bar-a" style="height:60px;width:95%">
+                                  Opacity:
+                                  <input type="range" name="slider-2" id="slider-opacity" data-highlight="true" min="0" max="100" value="50">
+                          </div>
+                          
+                          <!-- COLUMNS -->
+                          <div id="select-cols" class="ui-bar ui-bar-a" style="height:60px;width:95%">
+                                Showing:
+                                        <div name="columnsDiv" id="columnsDiv" class="ui-bar ui-bar-a">
+                                        </div>
+                                    <!-- <select id="columns"></select> -->
+                          </div>
+                          <!-- UPDATE -->
+                            <div class="ui-bar ui-bar-a" style="height:60px;width:95%">
+                                <button id="update"  style="width: 100px;"  data-icon="refresh">Update</button>
+                            </div>
+                        </div>    
+                    </div>
+            </div>
 
-		<!-- Menu for Advanced Options -->
-		<div id="advancedPanel">
+            <div id="overlay">
+                    <img src="loader.gif" alt="Loading" /><br/>
+                        Loading…
+            </div>
+         
+            <div id="map-content" data-role="content">
+				<div id="map"></div>
+            </div>
+			
+            <div id="footer">
+             <center><p>Copyright © 2018 The Consortium for Capacity Building - INSTAAR/University of Colorado in Boulder</p></center>
+            </div>	
 
-						<!-- RESOLUTION -->
-						<div class="ui-block-b" style="width:90%">
-							<div class="ui-bar ui-bar-a" style="height:60px">
-								Resolution (deg)
-								<input type="range" name="slider-2" id="slider-res" data-highlight="true" min="0.01" max="0.5" step="0.01" value="0.05">
-							</div>
-						</div>
-
-						<!-- OPACITY -->
-    					<div class="ui-block-a" style="width:90%">
-							<div class="ui-bar ui-bar-a" style="height:60px">
-								Opacity:
-								<input type="range" name="slider-2" id="slider-opacity" data-highlight="true" min="0" max="100" value="50">
-							</div>
-						</div>
-						
-						<!-- SCALE min -->
-						<div class="ui-block-a" style="width:10%">
-							<div class="ui-bar ui-bar-a" style="height:50px;">
-								<input type="number" data-clear-btn="false" name="scalemax" pattern="[0-9][0-9][0-9]" id="scalemin" value="0" size="4">
-							</div>
-						</div>
-						<!-- SCALE -->
-			    		<div class="ui-block-b" style="width:70%;">
-							<div class="ui-bar ui-bar-a" style="height:50px ; align-content: center">
-									<div  id="log" style="text-align: center; font-size: 12px">scale</div>
-									<div style="height:20px; text-align: center; border: none; outline: none;cursor: pointer;background: linear-gradient(to right, #00ff00 0%, #ff0000 100%)"></div>
-							</div>
-						</div>
-						<!-- SCALE max -->
-						<div class="ui-block-c" style="width:10%; height: 30px;">
-							<div class="ui-bar ui-bar-a" style="height:50px">
-								<input type="number" data-clear-btn="false" name="scalemax" pattern="[0-9][0-9][0-9]" id="scalemax" value="0">
-	    					</div>
-						</div>
-					
-						<!-- COLUMNS -->
-						<div class="ui-block-b" style="width:90%">
-							<div id="select-cols" class="ui-bar ui-bar-a" style="height:60px">
-								Showing:
-										<div name="columnsDiv" id="columnsDiv" class="ui-bar ui-bar-a">
-										</div>
-									<!-- <select id="columns"></select> -->
-							</div>
-						</div>
-
-						<!-- UPDATE -->
-						<div class="ui-block-b" style="width:90%">
-							<div class="ui-bar ui-bar-a" style="height:60px">
-								<button id="update"  style="width: 15%;"  data-icon="refresh">Update</button>
-							</div>
-						</div>
-					
-		</div>
-		
-		<!-- there goes the map -->
-		<div id="map-canvas"></div>
-
-		<div id="Footer">
-			<center><p>Copyright © 2018 The Consortium for Capacity Building - INSTAAR/University of Colorado in Boulder</p></center>
-		</div>	
-	
+        </div> 
+    </body>
+  
 </body>
 
 </html>
+
