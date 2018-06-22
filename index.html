@@ -181,7 +181,7 @@
             var RR  = feature.properties[ columns[selectedCol+2]];
             var lat = feature.properties["lat"];
 			var lon = feature.properties["lon"];
-			var text = columns[selectedCol+2] + "( "+ lat + " ; " + lon + " ) = " + RR ;
+			var text = columns[selectedCol+2] + " ( "+ lat + " ; " + lon + " ) = " + RR ;
             document.getElementById("log-color").innerHTML=text;
         });
         layer.on('mouseout', function (){
