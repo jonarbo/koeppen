@@ -1,0 +1,5 @@
+This is the Firebase Deployment of the Modiefied KOEPPEN for ENSO ... we rename it to KENSO
+
+Firebase handles the database, authentication
+
+there are some scritps to add data to the Firestore Database
