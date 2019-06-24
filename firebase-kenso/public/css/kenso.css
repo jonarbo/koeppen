@@ -1,0 +1,66 @@
+#mapPage, #map {
+    height: 100%;
+}
+
+#title {
+    color: #336600;
+    font-size: large;
+    text-align: left;
+    margin-left: 50px;
+    align-content: flex-end;
+}
+
+#footer p {
+    color: whitesmoke; 
+    background-color:#336600; 
+    padding:7px; 
+    margin-bottom:10px; 
+    margin-top:0px; 
+    font-size: 10px;
+}
+
+#map-content{
+    height: 70%;
+}
+
+#overlay {
+    background: #ffffff;
+    color: #666666;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 5000;
+    top: 0;
+    left: 0;
+    float: left;
+    text-align: center;
+    padding-top: 25%;
+    opacity: 0.5;
+    filter: alpha(opacity=50); /* For IE8 and earlier */
+} 
+
+#advancedPanel {
+    width: 100%; 
+    margin: 15px;
+    float:left;
+}
+
+#loginPanel {
+    float:right; 
+    margin-top:20px;
+    margin-right:20px;
+}
+
+#loggedUser {
+    float:left;
+}
+
+#opacity {
+    height:60px;
+    width:95%
+}
+
+#select-cols {
+    height:60px;
+    width:95%
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="modified koeppen for ENSO risk assesment"> 
+  
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Friendly Chat">
+  <meta name="theme-color" content="#303F9F">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Friendly Chat">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
+
+  <!-- Tile icon for Win8 -->
+  <meta name="msapplication-TileColor" content="#3372DF">
+  <meta name="msapplication-navbutton-color" content="#303F9F">
+
+  <!-- Styling --> 
+ <link rel="stylesheet" href="./css/leaflet.css"/>
+ <link rel="stylesheet" href="./css/jquery.mobile-1.4.5.min.css" />
+ <link rel="stylesheet" href="./css/kenso.css">
+
+ <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+ <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
+
+</head>
+
+<body>
+
+    <div data-role="page" id="mapPage" > 
+
+        <div data-role="footer">
+
+            <img style="margin:10px;" src='./images/CCBLogo-transparent.png' alt="Consortium for Capacity Building"> 
+
+            <!-- Login Panel -->
+            <div id="loginPanel" class="ui-bar">
+                    <div id="user-container">
+                            <div  hidden id="sign-out" style="float:left">
+                                    <button id="sign-out-button"></button>
+                            </div>
+                        <div hidden id="user-pic" style="float:left; margin-left:10px"><img id="userpic" style="padding: 3px; border-radius: 50%; border-width: 0px;"  width="40" ></div>
+                    
+                        <div  hidden id="sign-in"><button><img style="padding: 5px" height="20" width="20" src="/images/200px-google.png">Sign-in with Google</button></div>
+                    </div>
+            </div> <!-- LoginPanel -->
+                
+            <p  id="title" >Modified Koeppen for ENSO Disaster Risk Assesment</p> 
+
+            <div class="ui-bar">
+                
+                <!-- <div hidden id="loggedUser" class="ui-bar ui-bar-a" style="float:left" > --> 
+                <div hidden id="loggedUser" class="ui-bar-a" >
+                    <select name="selectedMenu" id="selectedMenu" data-mini="true" data-inline="true">
+                        <option value='Choose' >All</option>                       
+                    </select>
+                    <a href="#" id="options"  class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-right ui-btn-icon-right ui-icon-gear">Options</a>
+                </div>
+
+                <!-- Menu for Advanced Options -->
+                <div hidden id="advancedPanel">
+                    
+                    <!-- OPACITY -->
+                    <div id="opacity" class="ui-bar ui-bar-a">
+                            Opacity:
+                            <input type="range" name="slider-2" id="slider-opacity" data-highlight="true" min="0" max="100" value="50">
+                    </div>
+                    
+                    <!-- COLUMNS -->
+                    <div id="select-cols" class="ui-bar ui-bar-a">
+                        Showing:
+                                <div name="columnsDiv" id="columnsDiv" class="ui-bar ui-bar-a">
+                                </div>
+                            <!-- <select id="columns"></select> -->
+                    </div>
+                    <!-- UPDATE -->
+                    <div class="ui-bar ui-bar-a" style="height:60px;width:95%">
+                        <button id="update"  style="width: 100px;"  data-icon="refresh">Update</button>
+                    </div>
+                </div>   <!-- Advanced Panel -->
+            </div>
+        </div>
+
+        <div hidden id="overlay">
+                <img src="./images/loader.gif" alt="Loading" /><br/>
+                    Loading…
+        </div>
+        
+        <div id="map-content" data-role="content">
+            <div id="map"></div>
+        </div>
+        
+        <div id="footer">
+            <center><p>Copyright © 2018 The Consortium for Capacity Building - INSTAAR/University of Colorado in Boulder</p></center>
+        </div>	
+
+    </div> 
+
+    <script src="./js/leaflet.js"></script>
+<script src="./js/jquery-1.11.1.min.js"></script>
+<script src="./js/jquery.mobile-1.4.5.min.js"></script>    
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="/__/firebase/6.1.1/firebase-app.js"></script>
+<!-- Add Firebase products that you want to use -->
+<script src="/__/firebase/6.1.1/firebase-auth.js"></script>
+<script src="/__/firebase/6.1.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-functions.js"></script>
+<!-- Initialize Firebase -->
+<script src="/__/firebase/init.js"></script>
+
+<script src="scripts/main.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,22 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    // Allow the user to access documents in the "countries" collection
+    // only if they are authenticated.
+    match /countries/{country} {
+      allow read : if request.auth.uid != null;
+    }
+    
+    match /users/{userId} {
+      allow read : if request.auth.uid != null;
+    }
+    
+    // Make sure the uid of the requesting user matches name of the user
+    // document. The wildcard expression {userId} makes the userId variable
+    // available in rules
+     match /users/{userId} {
+      allow read, update, delete: if request.auth.uid == userId;
+      allow create: if request.auth.uid != null;
+    }
+  }
+}
