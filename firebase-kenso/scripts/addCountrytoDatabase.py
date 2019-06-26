@@ -1,12 +1,13 @@
 #!/usr/bin/env python 
 
 #
-# This script just adds a Cuntry name to the Firestore Database
+# This script just adds a Country name to the Firestore Database
 # 
 
 import sys
 import firebase_admin
 from firebase_admin import credentials , firestore
+from google.cloud.firestore_v1 import ArrayRemove, ArrayUnion
 
 if (len(sys.argv) < 2):
 	print ("Need a country name")
@@ -19,7 +20,12 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-data = {}
-
-db.collection(u'countries').document(countryName).set(data)
-
+#
+# If Country not in the database, add it
+#
+docs =  db.collection(u'tags').where(u'array', u'array_contains', countryName).get()
+exists =  sum(1 for x in docs) != 0 
+if ( not exists  ):
+	data = {}
+	docRef = db.collection(u'tags').document(u'countries')
+	docRef.update( {u'array': ArrayUnion([countryName])}  )
