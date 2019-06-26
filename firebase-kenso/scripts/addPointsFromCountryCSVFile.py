@@ -69,7 +69,6 @@ for line in file:
         if (c != "lat") and (c!="lon"):
             record['data'].update( { c : lina[header.index(c)] } )
 
-    print (record)
     docs =  pointsRef.where(u'coords.lat', u'==', lina[lati]).where(u'coords.lon', u'==', lina[loni]).get()
     exists =  sum(1 for x in docs) != 0 
 
