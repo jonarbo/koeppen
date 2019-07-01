@@ -29,19 +29,67 @@ $(window).load(function(){
  signOutButtonElement.addEventListener('click', signOut);
 
  $("#options").click(function(){
-    if ( $('#advancedPanel').is(":visible") ){ 
-        $('#advancedPanel').hide();
+    var e = document.getElementById('advancedPanel')
+    console.log( e.getAttribute('hidden') )
+    if ( e.getAttribute('hidden') == null ){ 
+        e.setAttribute('hidden','true')
     } else {
-        $('#advancedPanel').show();
+        e.removeAttribute('hidden')
     }
  });
 
  $("#selectedMenu").change( function(){
   //delete(map);
   var selected = $(this).val();	
-  if (selected == "Choose" ) {return;}
-  console.log("selected "  + $("#selectedMenu").selectedIndex )
- });
+  var e = document.getElementById('selectedMenu')
+  
+  if (selected == "Choose" ) {
+    // visual effects
+    var overlay = document.getElementById('overlay');
+    overlay.setAttribute('hidden','false')
+   
+    // Load only the public countries 
+    var countries = functions.httpsCallable('getCountriesForUser');
+    countries().then(function(result) {
+     if ( result.data.status ){
+        console.log("there was an error: " + result.data.error.details   )
+     } else {
+     
+      //load geojson data into map
+      loadGeoJSON(result.data)
+  
+      // set Items Visible  
+      var lu = document.getElementById('loggedUser'); 
+      lu.removeAttribute('hidden')  
+     }
+      var overlay = document.getElementById('overlay'); 
+      overlay.setAttribute('hidden','true')
+    });  
+ 
+  } else {
+    console.log("selected "  + e.options[e.selectedIndex].value )
+ 
+    var country = functions.httpsCallable('getCountry');
+    // visual effects
+    var overlay = document.getElementById('overlay'); 
+    overlay.setAttribute('hidden','false')
+    country( e.options[e.selectedIndex].value ).then(function(result) {
+     if ( result.data.status ){
+        console.log("there was an error: " + result.data.error.details   )
+      } else { 
+
+        //load geojson data into map
+        loadGeoJSON(result.data)
+    
+        // set Items Visible  
+        var lu = document.getElementById('loggedUser'); 
+        lu.removeAttribute('hidden')  
+       }
+        var overlay = document.getElementById('overlay'); 
+        overlay.setAttribute('hidden','true')
+    });
+  }
+ })
 
  $("#update").click(function() {
   updateItems();	 	
@@ -117,7 +165,6 @@ function initMap() {
 function onEachFeature(feature,layer) {
   layer.bindPopup("Lat: " + feature.properties.lat  + "<br/>Lng: " + feature.properties.lon + "<br>Value: " + feature.properties[ data.properties.columns.split(',')[selectedCol+2] ] );
   layer.on('mouseover', function(){
-       console.log(feature)
       var RR  = feature.properties[ data.properties.columns.split(',')[selectedCol+2] ];
       var lat = feature.properties.lat;
       var lon = feature.properties.lon;
@@ -207,10 +254,10 @@ function loadGeoJSON(datadict){
 function updateItems(){
   var opacity = $("#slider-opacity").val();
   var delta
+  var columns = data.properties.columns.split(',');
   if ( selectedCol != $("#columns").val() - 1 ){
       // chage data
       selectedCol = $("#columns").val() - 1;
-      var columns = data.properties.columns.split(',');
       var max = data.properties[columns[selectedCol+2]+"_max"];
       var min = data.properties[columns[selectedCol+2]+"_min"];                            
       var delta = max - min 
@@ -221,7 +268,7 @@ function updateItems(){
       delta =  document.getElementById("log-max").innerHTML - document.getElementById("log-min").innerHTML ;
   }
   layer.clearLayers();
-  L.geoJSON(mydata, {
+  L.geoJSON(data, {
           style: function(feature){
               var color = getColor( feature.properties[ columns[selectedCol+2] ],delta );
               return {
@@ -254,7 +301,16 @@ function signOut() {
   // Hide controls 
   var lu = document.getElementById('loggedUser');
   lu.setAttribute('hidden','true')
+  var ap = document.getElementById('advancedPanel');
+  ap.setAttribute('hidden','true')
+  
   document.getElementById('selectedMenu').innerHTML = ""
+
+  // Reset Map
+  layer.clearLayers();
+
+  //recenter map 
+  map.fitBounds( L.latLngBounds( L.latLng(-45,-45),L.latLng(45,45))); 
 }
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
@@ -317,7 +373,7 @@ function populateControls( data ){
   for ( var c in countriesArray){
     document.getElementById('selectedMenu').innerHTML += "<option value=" + countriesArray[c] + ">" + countriesArray[c] +"</option>";
   }
-  document.getElementById("selectedMenu").selectedIndex = "1";
+  document.getElementById("selectedMenu").selectedIndex = "0";
   document.getElementById("selectedMenu").setAttribute('selected','true')
 }
 
@@ -343,12 +399,34 @@ function getPublicData(){
   });
 }
 
+function getPrivateData(){
+  var countries = functions.httpsCallable('getCountriesForUser');
+  countries().then(function(result) {
+   if ( result.data.status ){
+      console.log("there was an error: " + result.data.error.details   )
+   } else {
+    
+    // populate controls 
+    populateControls(result.data)
+   
+    //load geojson data into map
+    loadGeoJSON(result.data)
+
+    // set Items Visible  
+    var lu = document.getElementById('loggedUser'); 
+    lu.removeAttribute('hidden')  
+   }
+    var overlay = document.getElementById('overlay'); 
+    overlay.setAttribute('hidden','true')
+  });  
+}
+
 function processRegisteredUser(user){  
   // visual effects
   var overlay = document.getElementById('overlay'); 
   overlay.removeAttribute('hidden'); 
   // Load only the public countries 
-  getPublicData()
+  getPrivateData()
 }
 
 function processUnregisteredUser(user) {

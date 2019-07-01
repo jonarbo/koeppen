@@ -22,6 +22,8 @@ if (len(sys.argv) < 2):
 	sys.exit() 
 
 filename =  sys.argv[1]
+isPublic = True
+#isPublic = False
 
 cred = credentials.Certificate("/Users/jonarbo/Devel/firebase-kenso/kenso-a0b7c-firebase-adminsdk-i81kh-7a750e5f93.json")
 firebase_admin.initialize_app(cred)
@@ -61,7 +63,7 @@ for line in file:
 			u'lon': lina[loni]
 	},
         u'country': countryName,
-        u'ispublic': False,
+        u'ispublic': isPublic,
 	u'data': {}
     }
 
